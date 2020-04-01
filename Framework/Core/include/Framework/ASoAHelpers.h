@@ -53,7 +53,7 @@ struct NTupleType<T, 0, REST...> {
   using type = std::tuple<REST...>;
 };
 
-// Group table (C++ vector of indices)
+// Group table
 bool sameCategory(std::pair<uint64_t, uint64_t> const& a, std::pair<uint64_t, uint64_t> const& b)
 {
   return a.first < b.first;
@@ -129,7 +129,7 @@ auto groupTable(const T& table, const std::string& categoryColumnName, int minCa
 
 // Synchronize categories so as groupedIndices contain elements only of categories common to all tables
 template <std::size_t K>
-void syncCategories(std::array<std::vector<std::pair<uint64_t, uint64_t>>, K>& groupedIndices)
+void syncCategories(std::array<std::vector<std::pair<int64_t, int64_t>>, K>& groupedIndices)
 {
   std::vector<std::pair<uint64_t, uint64_t>> firstCategories;
   std::vector<std::pair<uint64_t, uint64_t>> commonCategories;
@@ -181,19 +181,6 @@ struct CombinationsIndexPolicyBase {
     this->mIsEnd = true;
   }
 
-  void addOne() {}
-
-  CombinationType mCurrent;
-  IndicesType mMaxOffset; // one position past maximum acceptable position for each element of combination
-  bool mIsEnd;            // whether there are any more tuples available
-};
-
-template <typename... Ts>
-struct CombinationsUpperIndexPolicy : public CombinationsIndexPolicyBase<Ts...> {
-  using CombinationType = typename CombinationsIndexPolicyBase<Ts...>::CombinationType;
-
-  CombinationsUpperIndexPolicy(const Ts&... tables) : CombinationsIndexPolicyBase<Ts...>(tables...) {}
-
   void addOne()
   {
     constexpr auto k = sizeof...(Ts);
@@ -206,9 +193,9 @@ struct CombinationsUpperIndexPolicy : public CombinationsIndexPolicyBase<Ts...> 
           modify = false;
           for_<i.value>([&, this](auto j) {
             constexpr auto curJ = k - i.value + j.value;
-            int64_t nextInd = *std::get<1>(std::get<curJ - 1>(this->mCurrent).getIndices());
-            if (nextInd < std::get<curJ>(this->mMaxOffset)) {
-              std::get<curJ>(this->mCurrent).setCursor(nextInd);
+            auto resetIndex = this->getResetIndex<curJ>;
+            if (resetIndex < std::get<curJ>(this->mMaxOffset)) {
+              std::get<curJ>(this->mCurrent).setCursor(resetIndex);
             } else {
               modify = true;
             }
@@ -217,6 +204,27 @@ struct CombinationsUpperIndexPolicy : public CombinationsIndexPolicyBase<Ts...> 
       }
     });
     this->mIsEnd = modify;
+  }
+
+  // Resets current iterator based on its position in a tuple
+  // Used after overflow in adding
+  template <std::size_t curIteratorIndex>
+  int64_t getResetIndex() {
+    return curIteratorIndex;
+  }
+
+  CombinationType mCurrent;
+  IndicesType mMaxOffset; // one position past maximum acceptable position for each element of combination
+  bool mIsEnd;            // whether there are any more tuples available
+};
+
+template <typename... Ts>
+struct CombinationsUpperIndexPolicy : public CombinationsIndexPolicyBase<Ts...> {
+  CombinationsUpperIndexPolicy(const Ts&... tables) : CombinationsIndexPolicyBase<Ts...>(tables...) {}
+
+  template <std::size_t curIteratorIndex>
+  int64_t getResetIndex() {
+    return *std::get<1>(std::get<curIteratorIndex - 1>(this->mCurrent).getIndices());
   }
 };
 
@@ -237,29 +245,9 @@ struct CombinationsStrictlyUpperIndexPolicy : public CombinationsIndexPolicyBase
     });
   }
 
-  void addOne()
-  {
-    constexpr auto k = sizeof...(Ts);
-    bool modify = true;
-    for_<k>([&, this](auto i) {
-      if (modify) {
-        constexpr auto curInd = k - i.value - 1;
-        std::get<curInd>(this->mCurrent)++;
-        if (*std::get<1>(std::get<curInd>(this->mCurrent).getIndices()) != std::get<curInd>(this->mMaxOffset)) {
-          modify = false;
-          for_<i.value>([&, this](auto j) {
-            constexpr auto curJ = k - i.value + j.value;
-            int64_t nextInd = *std::get<1>(std::get<curJ - 1>(this->mCurrent).getIndices()) + 1;
-            if (nextInd < std::get<curJ>(this->mMaxOffset)) {
-              std::get<curJ>(this->mCurrent).setCursor(nextInd);
-            } else {
-              modify = true;
-            }
-          });
-        }
-      }
-    });
-    this->mIsEnd = modify;
+  template <std::size_t curIteratorIndex>
+  int64_t getResetIndex() {
+    return *std::get<1>(std::get<curIteratorIndex - 1>(this->mCurrent).getIndices()) + 1;
   }
 };
 
@@ -269,24 +257,9 @@ struct CombinationsFullIndexPolicy : public CombinationsIndexPolicyBase<Ts...> {
 
   CombinationsFullIndexPolicy(const Ts&... tables) : CombinationsIndexPolicyBase<Ts...>(tables...) {}
 
-  void addOne()
-  {
-    constexpr auto k = sizeof...(Ts);
-    bool modify = true;
-    for_<k>([&, this](auto i) {
-      if (modify) {
-        constexpr auto curInd = k - i.value - 1;
-        std::get<curInd>(this->mCurrent)++;
-        if (*std::get<1>(std::get<curInd>(this->mCurrent).getIndices()) != std::get<curInd>(this->mMaxOffset)) {
-          for_<i.value>([&, this](auto j) {
-            constexpr auto curJ = k - i.value + j.value;
-            std::get<curJ>(this->mCurrent).setCursor(0);
-          });
-          modify = false;
-        }
-      }
-    });
-    this->mIsEnd = modify;
+  template <std::size_t curIteratorIndex>
+  int64_t getResetIndex() {
+    return 0;
   }
 };
 
@@ -342,7 +315,7 @@ struct CombinationsBlockUpperIndexPolicy : public CombinationsBlockIndexPolicyBa
     }
   }
 
-  void setRanges()
+  virtual void setRanges()
   {
     constexpr auto k = sizeof...(Ts);
     for_<k>([&, this](auto i) {
@@ -363,7 +336,7 @@ struct CombinationsBlockUpperIndexPolicy : public CombinationsBlockIndexPolicyBa
       if (modify) {
         constexpr auto curInd = k - i.value - 1;
         std::get<curInd>(this->mCurrentIndices)++;
-        uint64_t curGroupedInd = std::get<curInd>(this->mCurrentIndices);
+        int64_t curGroupedInd = std::get<curInd>(this->mCurrentIndices);
         std::get<curInd>(this->mCurrent).setCursor(this->mGroupedIndices[curInd][curGroupedInd].second);
         uint64_t maxForWindow = std::get<curInd>(this->mBeginIndices) + this->mSlidingWindowSize;
 
@@ -372,9 +345,10 @@ struct CombinationsBlockUpperIndexPolicy : public CombinationsBlockIndexPolicyBa
           modify = false;
           for_<i.value>([&, this](auto j) {
             constexpr auto curJ = k - i.value + j.value;
-            if (std::get<curJ - 1>(this->mCurrentIndices) < std::get<curJ>(this->mMaxOffset)) {
-              std::get<curJ>(this->mCurrentIndices) = std::get<curJ - 1>(this->mCurrentIndices);
-              uint64_t curGroupedJ = std::get<curJ>(this->mCurrentIndices);
+            auto resetIndex = this->getResetIndex<decltype(this), curJ>();
+            if (resetIndex < std::get<curJ>(this->mMaxOffset)) {
+              std::get<curJ>(this->mCurrentIndices) = resetIndex;
+              int64_t curGroupedJ = std::get<curJ>(this->mCurrentIndices);
               std::get<curJ>(this->mCurrent).setCursor(this->mGroupedIndices[curJ][curGroupedJ].second);
             } else {
               modify = true;
@@ -414,6 +388,8 @@ struct CombinationsBlockUpperIndexPolicy : public CombinationsBlockIndexPolicyBa
         std::get<m.value>(this->mCurrentIndices) = std::get<m.value>(this->mMaxOffset);
         if (std::get<m.value>(this->mCurrentIndices) == this->mGroupedIndices[m.value].size()) {
           nextCatAvailable = false;
+        } else if (mOffsetNextCategory) {
+          std::get<m.value>(this->mCurrentIndices) = std::get<m.value>(this->mMaxOffset) + k - 1;
         }
       });
       if (nextCatAvailable) {
@@ -422,6 +398,11 @@ struct CombinationsBlockUpperIndexPolicy : public CombinationsBlockIndexPolicyBa
     }
 
     this->mIsEnd = modify && !nextCatAvailable;
+  }
+
+  template <std::size_t curIteratorIndex>
+  int64_t getResetIndex() {
+    return std::get<curIteratorIndex - 1>(this->mCurrentIndices);
   }
 };
 
@@ -725,6 +706,11 @@ struct CombinationsBlockStrictlyUpperSameIndexPolicy : public CombinationsBlockS
 
     this->mIsEnd = modify;
   }
+
+  template <std::size_t curIteratorIndex>
+  int64_t getResetIndex() {
+    return std::get<curIteratorIndex - 1>(this->mCurrentIndices) + 1;
+  }
 };
 
 template <typename T1, typename T, typename... Ts>
@@ -829,6 +815,11 @@ struct CombinationsBlockFullSameIndexPolicy : public CombinationsBlockSameIndexP
     }
 
     this->mIsEnd = modify;
+  }
+
+  template <std::size_t curIteratorIndex>
+  int64_t getResetIndex() {
+    return this->mBeginIndex;
   }
 
   uint64_t mBeginIndex;
