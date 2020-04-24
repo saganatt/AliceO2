@@ -1340,12 +1340,6 @@ class Filtered : public T
 template <typename T>
 using is_soa_filtered_t = typename framework::is_specialization<T, soa::Filtered>;
 
-template <typename T>
-auto filter(T&& t, framework::expressions::Filter const& expr)
-{
-  return Filtered<T>(t.asArrowTable(), expr);
-}
-
 } // namespace o2::soa
 
 #endif // O2_FRAMEWORK_ASOA_H_
