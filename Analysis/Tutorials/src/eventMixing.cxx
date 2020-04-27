@@ -11,6 +11,8 @@
 #include "Framework/AnalysisTask.h"
 #include "Framework/ASoAHelpers.h"
 
+#include <unordered_set>
+
 namespace o2::aod
 {
 namespace hash
@@ -18,8 +20,15 @@ namespace hash
 DECLARE_SOA_COLUMN(Bin, bin, int);
 } // namespace hash
 DECLARE_SOA_TABLE(Hashes, "AOD", "HASH", hash::Bin);
+namespace hashedCollision
+{
+DECLARE_SOA_INDEX_COLUMN_FULL(Hash, hash, int32_t, Hashes, "fHashesID");
+DECLARE_SOA_INDEX_COLUMN(Collision, collision);
+} // namespace hashedCollision
+DECLARE_SOA_TABLE(HashedCollisions, "AOD", "HASHEDCOLLISION", o2::soa::Index<>, hashedCollision::HashId, hashedCollision::CollisionId);
 
 using Hash = Hashes::iterator;
+using HashedCollision = HashedCollisions::iterator;
 } // namespace o2::aod
 
 using namespace o2;
@@ -34,6 +43,7 @@ struct HashTask {
   std::vector<float> xBins{-1.5f, -1.0f, -0.5f, 0.0f, 0.5f, 1.0f, 1.5f};
   std::vector<float> yBins{-1.5f, -1.0f, -0.5f, 0.0f, 0.5f, 1.0f, 1.5f};
   Produces<aod::Hashes> hashes;
+  // Produces<aod::HashedCollisions> hashedCollisions; // For version 2
 
   // Calculate hash for an element based on 2 properties and their bins.
   int getHash(std::vector<float> const& xBins, std::vector<float> const& yBins, float colX, float colY)
@@ -55,6 +65,7 @@ struct HashTask {
     return -1;
   }
 
+  // For version 1
   void process(aod::Collisions const& collisions)
   {
     for (auto& collision : collisions) {
@@ -63,6 +74,22 @@ struct HashTask {
       hashes(hash);
     }
   }
+
+  // For version 2
+  //void process2(aod::Collisions const& collisions)
+  //{
+  //  int ind = 0;
+  //  std::unordered_set<int> uniqueHashes;
+  //  for (auto& collision : collisions) {
+  //    int hash = getHash(xBins, yBins, collision.posX(), collision.posY());
+  //    LOGF(info, "Collision: %d (%f, %f, %f) hash: %d", collision.index(), collision.posX(), collision.posY(), collision.posZ(), hash);
+  //    uniqueHashes.emplace(hash);
+  //    hashedCollisions(hash, collision);
+  //  }
+  //  for (auto& hash : uniqueHashes) {
+  //    hashes(hash);
+  //  }
+  //}
 };
 
 // Version 1: Using categorised combinations
@@ -105,7 +132,56 @@ struct CollisionsCombinationsTask {
   }
 };
 
-// Version 2: Filtering instead of combinations
+// Version 2: Using nested grouping
+struct NestedGroupingTask {
+  void process(aod::Hash& hash, aod::HashedCollisions& hashedCollisions, aod::Tracks& tracks)
+  {
+    //    hashes.bindExternalIndices(&hashedCollisions);
+    //    auto hashedTuple = std::make_tuple(hashedCollisions);
+    //    AnalysisDataProcessorBuilder::GroupSlicer hashSlicer(hashes, hashedTuple);
+    //
+    //    for (auto& slice : hashSlicer) {
+    //      auto sliceCollisions = std::get<aod::HashedCollisions>(slice.associatedTables());
+    //      sliceCollisions.bindExternalIndices(&tracks);
+    hashedCollisions.bindExternalIndices(&tracks);
+    auto tracksTuple = std::make_tuple(tracks);
+    AnalysisDataProcessorBuilder::GroupSlicer colSlicer(hashedCollisions, tracksTuple);
+
+    for (auto it1 = hashedCollisions.begin(); it1 != hashedCollisions.end(); it1++) {
+      auto& c1 = *it1;
+      for (auto it2 = it1 + 1; it2 != hashedCollisions.end(); it2++) {
+        auto& c2 = *it2;
+        LOGF(info, "Collisions bin: %d pair: %d (%f, %f, %f), %d (%f, %f, %f)", c1.hash().bin(), c1.collision().index(), c1.collision().posX(), c1.collision().posY(), c1.collision().posZ(), c2.collision().index(), c2.collision().posX(), c2.collision().posY(), c2.collision().posZ());
+
+        auto tit1 = colSlicer.begin();
+        auto tit2 = colSlicer.begin();
+        for (auto& colSlice : colSlicer) {
+          if (colSlice.groupingElement().collision().index() == c1.collision().index()) {
+            tit1 = colSlice;
+            break;
+          }
+        }
+        for (auto& colSlice : colSlicer) {
+          if (colSlice.groupingElement().collision().index() == c2.collision().index()) {
+            tit2 = colSlice;
+            break;
+          }
+        }
+        auto tracks1 = std::get<aod::Tracks>(tit1.associatedTables());
+        tracks1.bindExternalIndices(&hashedCollisions);
+        auto tracks2 = std::get<aod::Tracks>(tit2.associatedTables());
+        tracks2.bindExternalIndices(&hashedCollisions);
+
+        for (auto& [t1, t2] : combinations(CombinationsFullIndexPolicy(tracks1, tracks2))) {
+          LOGF(info, "Mixed event tracks pair: (%d, %d) from events (%d, %d)", t1.index(), t2.index(), c1.collision().index(), c2.collision().index());
+        }
+      }
+    }
+    //    }
+  }
+};
+
+// Version 3: Filtering instead of combinations
 // Possible only after filters & grouping upgrades
 // struct CollisionsFilteringTask {
 // Alternatively: filter/partition directly on collisions
@@ -136,4 +212,5 @@ WorkflowSpec defineDataProcessing(ConfigContext const&)
   return WorkflowSpec{
     adaptAnalysisTask<HashTask>("collisions-hashed"),
     adaptAnalysisTask<CollisionsCombinationsTask>("mixed-event-tracks")};
+  //adaptAnalysisTask<NestedGroupingTask>("mixed-event-tracks")};
 }
