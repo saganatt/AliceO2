@@ -90,6 +90,15 @@ struct BindingNode {
   atype::type type;
 };
 
+/// An expression tree node corresponding to a particular table object binding
+template <typename C>
+struct ColumnNode {
+  ColumnNode(ColumnNode const&) = default;
+  ColumnNode(ColumnNode&&) = delete;
+  ColumnNode(const std::shared_ptr<C> column_) : column{column_} {}
+  std::shared_ptr<arrow::Column> column; 
+}
+
 /// An expression tree node corresponding to binary or unary operation
 struct OpNode {
   OpNode(BasicOp op_) : op{op_} {}
@@ -110,6 +119,11 @@ struct Node {
   {
   }
 
+  template<typename T>
+  Node(ColumnNode<T> n) : self{n}, left{nullptr}, right{nullptr}
+  {
+  }
+
   Node(OpNode op, Node&& l, Node&& r)
     : self{op},
       left{std::make_unique<Node>(std::move(l))},
@@ -121,7 +135,7 @@ struct Node {
       right{nullptr} {}
 
   /// variant with possible nodes
-  using self_t = std::variant<LiteralNode, BindingNode, OpNode>;
+  using self_t = std::variant<LiteralNode, BindingNode, OpNode, ColumnNode>;
   self_t self;
   /// pointers to children
   std::unique_ptr<Node> left;
