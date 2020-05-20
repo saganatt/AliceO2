@@ -19,6 +19,7 @@
 #include <boost/test/unit_test.hpp>
 
 using namespace o2::framework;
+using namespace o2::framework::expressions;
 using namespace o2::soa;
 
 namespace test
@@ -1228,4 +1229,43 @@ BOOST_AUTO_TEST_CASE(BlockCombinations)
     count++;
   }
   BOOST_CHECK_EQUAL(count, 0);
+}
+
+BOOST_AUTO_TEST_CASE(FilteredCombinations)
+{
+  TableBuilder builderA;
+  auto rowWriterA = builderA.persist<int32_t, int32_t>({"x", "y"});
+  rowWriterA(0, 0, 0);
+  rowWriterA(0, 1, 0);
+  rowWriterA(0, 2, 0);
+  rowWriterA(0, 3, 0);
+  rowWriterA(0, 4, 0);
+  rowWriterA(0, 5, 0);
+  rowWriterA(0, 6, 0);
+  rowWriterA(0, 7, 0);
+  auto tableA = builderA.finalize();
+  BOOST_REQUIRE_EQUAL(tableA->num_rows(), 8);
+
+  using TestA = o2::soa::Table<o2::soa::Index<>, test::X, test::Y>;
+
+  TestA testsA{tableA};
+
+  BOOST_REQUIRE_EQUAL(8, testsA.size());
+  int nA = testsA.size();
+
+  Filter pairsFilter = Bind<test::X>(testsA) > 3;
+  int count = 0;
+  int i = 4;
+  int j = 5;
+  for (auto& [t0, t1] : combinations(pairsFilter, testsA, testsA)) {
+    BOOST_CHECK_EQUAL(t0.x(), i);
+    BOOST_CHECK_EQUAL(t1.x(), j);
+    count++;
+    j++;
+    if (j == nA) {
+      i++;
+      j = i + 1;
+    }
+  }
+  BOOST_CHECK_EQUAL(count, 6);
 }

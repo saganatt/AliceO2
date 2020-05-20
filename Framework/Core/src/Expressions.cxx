@@ -40,6 +40,13 @@ struct BindingNodeHelper {
   }
 };
 
+struct ColumnNodeHelper {
+  DatumSpec operator()(ColumnNode node) const
+  {
+    return DatumSpec{node.column, node.name, node.type};
+  }
+};
+
 struct OpNodeHelper {
   ColumnOperationSpec operator()(OpNode node) const
   {
@@ -106,6 +113,7 @@ Operations createOperations(Filter const& expression)
       overloaded{
         [lh = LiteralNodeHelper{}](LiteralNode node) { return lh(node); },
         [bh = BindingNodeHelper{}](BindingNode node) { return bh(node); },
+        [ch = ColumnNodeHelper{}](ColumnNode node) { return ch(node); },
         [](auto&&) { return DatumSpec{}; }},
       node->self);
   };
@@ -321,6 +329,14 @@ gandiva::NodePtr createExpressionTree(Operations const& opSpecs,
       fieldNodes.insert({name, node});
       return node;
     }
+
+    if (spec.datum.index() == 4) {
+      auto name = std::get<std::string>(spec.datum);
+      // how to bind to spec.column?
+      auto node = gandiva::TreeExprBuilder::MakeField(Schema->GetFieldByName(name));
+      return node;
+    }
+
     throw std::runtime_error("Malformed DatumSpec");
   };
 

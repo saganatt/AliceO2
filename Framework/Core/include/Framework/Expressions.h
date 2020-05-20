@@ -14,6 +14,7 @@
 #include "Framework/CompilerBuiltins.h"
 #include "Framework/Pack.h"
 #include "Framework/CheckTypes.h"
+#include "Framework/ArrowCompatibility.h"
 #include <arrow/type_fwd.h>
 #include <gandiva/gandiva_aliases.h>
 #include <arrow/type.h>
@@ -91,13 +92,18 @@ struct BindingNode {
 };
 
 /// An expression tree node corresponding to a particular table object binding
-template <typename C>
+// FIXME: Should it be ChunkedArray?
+using BackendColumnType = o2::framework::BackendColumnType;
 struct ColumnNode {
   ColumnNode(ColumnNode const&) = default;
   ColumnNode(ColumnNode&&) = delete;
-  ColumnNode(const std::shared_ptr<C> column_) : column{column_} {}
-  std::shared_ptr<arrow::Column> column; 
-}
+  ColumnNode(const BackendColumnType* column_, const std::string& name_ atype::type type_) : name{name_} type{type_}, column{column_} {}
+  BackendColumnType* column;
+  std::string name;
+  atype::type type;
+  // type{expressions::selectArrowType<typename C::type>()} {}
+  // std::make_shared<arrow::Field>(C::mLabel, expressions::concreteArrowType(expressions::selectArrowType<typename C::type>()))...});
+};
 
 /// An expression tree node corresponding to binary or unary operation
 struct OpNode {
@@ -119,8 +125,7 @@ struct Node {
   {
   }
 
-  template<typename T>
-  Node(ColumnNode<T> n) : self{n}, left{nullptr}, right{nullptr}
+  Node(ColumnNode n) : self{n}, left{nullptr}, right{nullptr}
   {
   }
 
@@ -273,6 +278,20 @@ inline Node nlog10(Node left)
 inline Node nabs(Node left)
 {
   return Node{OpNode{BasicOp::Abs}, std::move(left)};
+}
+
+template <typename C, typename T>
+ColumnNode Bind(const T& table) {
+  //auto arrowTable = table.asArrowTable();
+  //auto arrowColumn = arrowTable->GetColumnByName(name);
+  //auto type = arrowColumn->type();
+  // FIXME: table.begin() does not make sense
+  // Table::lookupColumn()?
+  auto column = static_cast<C>(table.begin());
+  auto arrowColumn = column.getIterator().mColumn;
+  auto type = expressions::selectArrowType<typename C::type>();
+  auto name = column.columnLabel();
+  return ColumnNode(arrowColumn, name, type);
 }
 
 /// A struct, containing the root of the expression tree
