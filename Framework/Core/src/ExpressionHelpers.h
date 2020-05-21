@@ -40,12 +40,12 @@ struct DatumSpec {
   /// datum spec either contains an index, a value of a literal or a binding label
   using datum_t = std::variant<std::monostate, size_t, LiteralNode::var_t, std::string>;
   datum_t datum;
-  BackendColumnType* column = nullptr; // Used by ColumnNode only
+  std::shared_ptr<BackendColumnType> column = nullptr; // Used by ColumnNode only
   atype::type type = atype::NA;
   explicit DatumSpec(size_t index, atype::type type_) : datum{index}, type{type_} {}
   explicit DatumSpec(LiteralNode::var_t literal, atype::type type_) : datum{literal}, type{type_} {}
   explicit DatumSpec(std::string binding, atype::type type_) : datum{binding}, type{type_} {}
-  explicit DatumSpec(BackendColumnType* column_, std::string binding, atype::type type_) : column{column_} datum{binding}, type{type_} {}
+  explicit DatumSpec(std::shared_ptr<BackendColumnType> column_, std::string binding, atype::type type_) : column{column_}, datum{binding}, type{type_} {}
   DatumSpec() : datum{std::monostate{}} {}
   DatumSpec(DatumSpec const&) = default;
   DatumSpec(DatumSpec&&) = default;

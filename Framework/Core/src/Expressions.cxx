@@ -322,19 +322,17 @@ gandiva::NodePtr createExpressionTree(Operations const& opSpecs,
 
     if (spec.datum.index() == 3) {
       auto name = std::get<std::string>(spec.datum);
-      auto lookup = fieldNodes.find(name);
-      if (lookup != fieldNodes.end())
-        return lookup->second;
-      auto node = gandiva::TreeExprBuilder::MakeField(Schema->GetFieldByName(name));
-      fieldNodes.insert({name, node});
-      return node;
-    }
-
-    if (spec.datum.index() == 4) {
-      auto name = std::get<std::string>(spec.datum);
-      // how to bind to spec.column?
-      auto node = gandiva::TreeExprBuilder::MakeField(Schema->GetFieldByName(name));
-      return node;
+      if (spec.column != nullptr) {
+        auto node = gandiva::TreeExprBuilder::MakeField(Schema->GetFieldByName(name));
+        return node;
+      } else {
+        auto lookup = fieldNodes.find(name);
+        if (lookup != fieldNodes.end())
+          return lookup->second;
+        auto node = gandiva::TreeExprBuilder::MakeField(Schema->GetFieldByName(name));
+        fieldNodes.insert({name, node});
+        return node;
+      }
     }
 
     throw std::runtime_error("Malformed DatumSpec");

@@ -92,17 +92,14 @@ struct BindingNode {
 };
 
 /// An expression tree node corresponding to a particular table object binding
-// FIXME: Should it be ChunkedArray?
 using BackendColumnType = o2::framework::BackendColumnType;
 struct ColumnNode {
   ColumnNode(ColumnNode const&) = default;
   ColumnNode(ColumnNode&&) = delete;
-  ColumnNode(const BackendColumnType* column_, const std::string& name_ atype::type type_) : name{name_} type{type_}, column{column_} {}
-  BackendColumnType* column;
+  ColumnNode(std::shared_ptr<BackendColumnType> column_, const std::string& name_, atype::type type_) : name{name_}, type{type_}, column{column_} {}
+  std::shared_ptr<BackendColumnType> column;
   std::string name;
   atype::type type;
-  // type{expressions::selectArrowType<typename C::type>()} {}
-  // std::make_shared<arrow::Field>(C::mLabel, expressions::concreteArrowType(expressions::selectArrowType<typename C::type>()))...});
 };
 
 /// An expression tree node corresponding to binary or unary operation
@@ -282,16 +279,16 @@ inline Node nabs(Node left)
 
 template <typename C, typename T>
 ColumnNode Bind(const T& table) {
-  //auto arrowTable = table.asArrowTable();
-  //auto arrowColumn = arrowTable->GetColumnByName(name);
-  //auto type = arrowColumn->type();
-  // FIXME: table.begin() does not make sense
-  // Table::lookupColumn()?
-  auto column = static_cast<C>(table.begin());
-  auto arrowColumn = column.getIterator().mColumn;
-  auto type = expressions::selectArrowType<typename C::type>();
-  auto name = column.columnLabel();
-  return ColumnNode(arrowColumn, name, type);
+  auto arrowTable = table.asArrowTable();
+  static_assert(C::persistent::value, "Template parameter must be a column");
+  auto label = C::columnLabel();
+  auto index = arrowTable->schema()->GetFieldIndex(label);
+  if (index == -1) {
+    throw std::runtime_error(std::string("Unable to find column with label ") + label);
+  }
+  auto column = arrowTable->column(index);
+  auto type = selectArrowType<typename C::type>();
+  return ColumnNode(column, label, type);
 }
 
 /// A struct, containing the root of the expression tree
