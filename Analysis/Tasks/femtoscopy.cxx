@@ -28,32 +28,51 @@ using namespace o2::framework::expressions;
 #define O2_DEFINE_CONFIGURABLE(NAME, TYPE, DEFAULT, HELP) Configurable<TYPE> NAME{#NAME, DEFAULT, HELP};
 
 struct FemtoscopyTask {
-	const double PionMass = 0.13956995;
-	const double KaonMass = 0.493677;
-	const double ProtonMass = 0.938272013;
-	const double LambdaMass = 1.115683;
-	
-	const int numOfMultBins = 1;	
-	const int numOfChTypes = 16; //13
-	const int numOfkTbins = 1;
+  const double PionMass = 0.13956995;
+  const double KaonMass = 0.493677;
+  const double ProtonMass = 0.938272013;
+  const double LambdaMass = 1.115683;
 
-	bool performSharedDaughterCut = false;
-	bool enablePairMonitors = true;
+  const int numOfMultBins = 1;
+  const int numOfChTypes = 16; //13
+  const int numOfkTbins = 1;
+
+  bool performSharedDaughterCut = false;
+  bool enablePairMonitors = true;
+
+  int runmults[numOfMultBins] = {1};
+  int multbins[numOfMultBins + 1] = {0, 1000};
+
+  int runch[numOfChTypes] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0}; // 1 - wlacza czastki do analizy
+  const char* chrgs[numOfChTypes] = {"PP", "aPaP", "PaP", "KpKp", "KmKm", "KpKm", "PIpPIp", "PImPIm", "PIpPIm", "V0LL", "V0ALAL", "V0LAL", "all", "plus", "minus", "mixed"};
+
+  int runqinv = 1;
+
+  int runtype = 0; // Types 0 - global, 1 - ITS only, 2 - TPC Inner	//global tracks ->mfit ITS+TPC
+  int owncuts = 0;
+  int owndca = 0;
+
+  int gammacut = 1; // cut na ee z gamma
+
+  double shqmax = 2.0;
+  int nbinssh = 20;
 
   // Filters and input definitions
-//#define MYFILTER
-//#ifdef MYFILTER
-//  Filter trackFilter = (aod::etaphi::etam > -0.8f) && (aod::etaphi::etam < 0.8f) && (aod::etaphi::ptm > 1.0f);
-//  using myTracks = soa::Filtered<aod::Tracks>;
-//#else
+  //#define MYFILTER
+  //#ifdef MYFILTER
+  //  Filter trackFilter = (aod::etaphi::etam > -0.8f) && (aod::etaphi::etam < 0.8f) && (aod::etaphi::ptm > 1.0f);
+  //  using myTracks = soa::Filtered<aod::Tracks>;
+  //#else
   using myTracks = aod::Tracks;
-//#endif
+  //#endif
 
   // Configuration
+  // TODO: Filterbit 96 == ((aod::track::isGlobalTrack == (uint8_t)1) || (aod::track::isGlobalTrackSDD == (uint8_t)1))
   O2_DEFINE_CONFIGURABLE(cfgFilterBit, int, 96, "Select filterbit");
   // TODO: Corresponding cut in O2?
   O2_DEFINE_CONFIGURABLE(cfgMinPlpContribSPD, int, 3, "SPD pile-up cut");
-  O2_DEFINE_CONFIGURABLE(cfgMultBinNo, int, 10, "Number of multiplicity bins");
+  O2_DEFINE_CONFIGURABLE(cfgMultBinNo, int, 200, "Number of multiplicity bins");
+  O2_DEFINE_CONFIGURABLE(cfgZVertBinNo, int, 10, "Number of z-vertex bins");
 
   // TODO: Boolean once enabled
   O2_DEFINE_CONFIGURABLE(cfgIfGlobalTracks, int, 0, "Whether to use global tracks: 1 - yes, 0 - no");
@@ -72,6 +91,10 @@ struct FemtoscopyTask {
   void init(o2::framework::InitContext&)
   {
   }
+
+  // Use centrality percentile from V0M
+  // See AliPhysics/PWGCF/FEMTOSCOPY/AliFemto/AliFemtoEventReaderAOD.cxx:595
+  // Reader->SetUseMultiplicity(AliFemtoEventReaderAOD::kCentrality);
 
   // Version with explicit nested loop
   void process(soa::Join<aod::Collisions, aod::EvSels, aod::Cents>::iterator const& collision, myTracks const& tracks)
