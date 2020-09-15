@@ -12,6 +12,7 @@
 #include "Framework/AnalysisDataModel.h"
 #include "Framework/ASoAHelpers.h"
 
+#include "Analysis/TrackSelectionTables.h"
 #include "Analysis/EventSelection.h"
 #include "Analysis/Centrality.h"
 #include "Analysis/StepTHn.h"
@@ -34,7 +35,7 @@ struct FemtoscopyTask {
   const double LambdaMass = 1.115683;
 
   const int numOfMultBins = 1;
-  const int numOfChTypes = 16; //13
+  const int numOfChTypes = 16;
   const int numOfkTbins = 1;
 
   bool performSharedDaughterCut = false;
@@ -43,12 +44,13 @@ struct FemtoscopyTask {
   int runmults[numOfMultBins] = {1};
   int multbins[numOfMultBins + 1] = {0, 1000};
 
+  // TODO: Just one kind for pions?
   int runch[numOfChTypes] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0}; // 1 - wlacza czastki do analizy
   const char* chrgs[numOfChTypes] = {"PP", "aPaP", "PaP", "KpKp", "KmKm", "KpKm", "PIpPIp", "PImPIm", "PIpPIm", "V0LL", "V0ALAL", "V0LAL", "all", "plus", "minus", "mixed"};
 
   int runqinv = 1;
 
-  int runtype = 0; // Types 0 - global, 1 - ITS only, 2 - TPC Inner	//global tracks ->mfit ITS+TPC
+  int runtype = 0; // Types 0 - global, 1 - ITS only, 2 - TPC Inner
   int owncuts = 0;
   int owndca = 0;
 
@@ -57,17 +59,7 @@ struct FemtoscopyTask {
   double shqmax = 2.0;
   int nbinssh = 20;
 
-  // Filters and input definitions
-  //#define MYFILTER
-  //#ifdef MYFILTER
-  //  Filter trackFilter = (aod::etaphi::etam > -0.8f) && (aod::etaphi::etam < 0.8f) && (aod::etaphi::ptm > 1.0f);
-  //  using myTracks = soa::Filtered<aod::Tracks>;
-  //#else
-  using myTracks = aod::Tracks;
-  //#endif
-
   // Configuration
-  // TODO: Filterbit 96 == ((aod::track::isGlobalTrack == (uint8_t)1) || (aod::track::isGlobalTrackSDD == (uint8_t)1))
   O2_DEFINE_CONFIGURABLE(cfgFilterBit, int, 96, "Select filterbit");
   // TODO: Corresponding cut in O2?
   O2_DEFINE_CONFIGURABLE(cfgMinPlpContribSPD, int, 3, "SPD pile-up cut");
@@ -88,13 +80,38 @@ struct FemtoscopyTask {
   O2_DEFINE_CONFIGURABLE(cfgNEtaMax, float, 0.8f, "nEtaMax");
   O2_DEFINE_CONFIGURABLE(cfgMaxPt, float, 2.5f, "MaxPt");
 
+  // Filters and input definitions
+  //#define MYFILTER
+  //#ifdef MYFILTER
+  Filter filterBit96 = (aod::track::isGlobalTrack == (uint8_t)1) || (aod::track::isGlobalTrackSDD == (uint8_t)1);
+  using myTracks = soa::Filtered<soa::Join<aod::Tracks, aod::TrackSelection>>;
+  // From correlations.cxx
+  // Filter trackFilter = (nabs(aod::track::eta) < cfgCutEta) && (aod::track::pt > cfgCutPt) && (aod::track::isGlobalTrack == (uint8_t)1);
+  //#else
+  //using myTracks = aod::Tracks;
+  //#endif
+
   void init(o2::framework::InitContext&)
   {
   }
 
-  // Use centrality percentile from V0M
-  // See AliPhysics/PWGCF/FEMTOSCOPY/AliFemto/AliFemtoEventReaderAOD.cxx:595
-  // Reader->SetUseMultiplicity(AliFemtoEventReaderAOD::kCentrality);
+  // TODO: AliFemtoEventReaderAOD::CopyAODToFemtoEvent() - new task and femto data model?
+
+  // Additional codes from MultSelection reader:
+  // See AliPhysics/PWGCF/FEMTOSCOPY/AliFemto/AliFemtoEventReaderAODMultSelection.cxx:25
+  // Data form MultSelection task
+  // femto_event->SetCentralityV0(mult_selection->GetMultiplicityPercentile("V0M"));
+  // TODO: CL1 not present in O2?
+  // femto_event->SetCentralityCL1(mult_selection->GetMultiplicityPercentile("CL1"));
+  // TODO: What fNormalizedMult is used for?
+  // femto_event->SetNormalizedMult(lrint(10 * mult_selection->GetMultiplicityPercentile("V0M")));
+
+  // TODO: Event mixing according to multiplicity and z-vertex
+	// AliFemtoVertexMultAnalysis	*anetaphitpc[numOfMultBins*numOfChTypes];
+
+  // TODO: Cuts
+  // TODO: Monitors (histograms)
+  // TODO: Correlation functions
 
   // Version with explicit nested loop
   void process(soa::Join<aod::Collisions, aod::EvSels, aod::Cents>::iterator const& collision, myTracks const& tracks)
