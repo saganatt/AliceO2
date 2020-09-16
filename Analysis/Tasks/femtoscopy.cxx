@@ -30,23 +30,13 @@ using namespace o2::framework::expressions;
 
 struct FemtoscopyTask {
   const double PionMass = 0.13956995;
-  const double KaonMass = 0.493677;
-  const double ProtonMass = 0.938272013;
-  const double LambdaMass = 1.115683;
-
-  const int numOfMultBins = 1;
-  const int numOfChTypes = 16;
-  const int numOfkTbins = 1;
 
   bool performSharedDaughterCut = false;
   bool enablePairMonitors = true;
 
-  int runmults[numOfMultBins] = {1};
-  int multbins[numOfMultBins + 1] = {0, 1000};
-
   // TODO: Just one kind for pions?
-  int runch[numOfChTypes] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0}; // 1 - wlacza czastki do analizy
-  const char* chrgs[numOfChTypes] = {"PP", "aPaP", "PaP", "KpKp", "KmKm", "KpKm", "PIpPIp", "PImPIm", "PIpPIm", "V0LL", "V0ALAL", "V0LAL", "all", "plus", "minus", "mixed"};
+  // Pions: 6
+  const char* chrgs[numOfChTypes] = {"PIpPIp"};
 
   int runqinv = 1;
 
@@ -63,8 +53,6 @@ struct FemtoscopyTask {
   O2_DEFINE_CONFIGURABLE(cfgFilterBit, int, 96, "Select filterbit");
   // TODO: Corresponding cut in O2?
   O2_DEFINE_CONFIGURABLE(cfgMinPlpContribSPD, int, 3, "SPD pile-up cut");
-  O2_DEFINE_CONFIGURABLE(cfgMultBinNo, int, 200, "Number of multiplicity bins");
-  O2_DEFINE_CONFIGURABLE(cfgZVertBinNo, int, 10, "Number of z-vertex bins");
 
   // TODO: Boolean once enabled
   O2_DEFINE_CONFIGURABLE(cfgIfGlobalTracks, int, 0, "Whether to use global tracks: 1 - yes, 0 - no");
@@ -72,7 +60,6 @@ struct FemtoscopyTask {
   O2_DEFINE_CONFIGURABLE(cfgIfIsPileUp, int, 1, "Whether to pile up: 1 - yes, 0 - no");
   // TODO: Are there 'monitors' in O2? What is this?
   O2_DEFINE_CONFIGURABLE(cfgIfMonitors, int, 1, "Whether to use monitors: 1 - yes, 0 - no");
-  O2_DEFINE_CONFIGURABLE(cfgIfV0Monitors, int, 0, "Whether to use V0 monitors: 1 - yes, 0 - no");
 
   O2_DEFINE_CONFIGURABLE(cfgNSigmaVal, float, 2.0f, "nSigmaVal");
   O2_DEFINE_CONFIGURABLE(cfgNSigmaVal2, float, 3.0f, "nSigmaVal2");
@@ -106,12 +93,32 @@ struct FemtoscopyTask {
   // TODO: What fNormalizedMult is used for?
   // femto_event->SetNormalizedMult(lrint(10 * mult_selection->GetMultiplicityPercentile("V0M")));
 
-  // TODO: Event mixing according to multiplicity and z-vertex
-	// AliFemtoVertexMultAnalysis	*anetaphitpc[numOfMultBins*numOfChTypes];
-
   // TODO: Cuts
+
+  // Basic cut and monitor
+  //mecetaphitpc[aniter] = new AliFemtoBasicEventCut();
+  //mecetaphitpc[aniter]->SetEventMult(0.001,100000);
+  //mecetaphitpc[aniter]->SetVertZPos(-7,7);//cm
+  //cutPassEvMetaphitpc[aniter] = new AliFemtoCutMonitorEventMult(Form("cutPass%stpcM%i", chrgs[ichg], imult), 2000, 20000.5);
+  //cutFailEvMetaphitpc[aniter] = new AliFemtoCutMonitorEventMult(Form("cutFail%stpcM%i", chrgs[ichg], imult), 2000, 20000.5);
+  //mecetaphitpc[aniter]->AddCutMonitor(cutPassEvMetaphitpc[aniter], cutFailEvMetaphitpc[aniter]);
+
+  // Single particle track cuts
+  //dtc1etaphitpc[aniter] = new AliFemtoMJTrackCut();
+  //dtc1etaphitpc[aniter]->SetCharge(1.0);
+  //dtc1etaphitpc[aniter]->SetEta(nEtaMin,nEtaMax);
+  //dtc1etaphitpc[aniter]->SetNsigma(nSigmaVal); //w zaleznosci od pedow jest brane albo nsigma1 albo nsigma2
+  //dtc1etaphitpc[aniter]->SetNsigma2(nSigmaVal2);
+  //dtc1etaphitpc[aniter]->SetNsigmaTPCTOF(kTRUE);//bierzemy jednoczesnie sigma z TPC i TOF jednoczesnie
+  //dtc1etaphitpc[aniter]->SetElectronRejection(ifElectronRejection);
+
   // TODO: Monitors (histograms)
   // TODO: Correlation functions
+
+  // TODO: Event mixing according to multiplicity and z-vertex
+  //                          bins vtx, min vtx, max vtx, bins mult, min mult, max mult
+  // 5 events to mix, collection of size min 1
+  // AliFemtoVertexMultAnalysis(7, -7.0, 7.0, 20, 0, 1000);
 
   // Version with explicit nested loop
   void process(soa::Join<aod::Collisions, aod::EvSels, aod::Cents>::iterator const& collision, myTracks const& tracks)
