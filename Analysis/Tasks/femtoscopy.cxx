@@ -15,6 +15,7 @@
 #include "Analysis/TrackSelectionTables.h"
 #include "Analysis/EventSelection.h"
 #include "Analysis/Centrality.h"
+#include "Analysis/Multiplicity.h"
 #include "Analysis/StepTHn.h"
 #include "Analysis/CorrelationContainer.h"
 
@@ -29,6 +30,10 @@ using namespace o2::framework::expressions;
 #define O2_DEFINE_CONFIGURABLE(NAME, TYPE, DEFAULT, HELP) Configurable<TYPE> NAME{#NAME, DEFAULT, HELP};
 
 struct FemtoscopyTask {
+  using myCollisions = soa::Join<aod::Collisions, aod::EvSels, aod::Cents, aod::Mults>;
+  using myCollision = soa::Join<aod::Collisions, aod::EvSels, aod::Cents, aod::Mults>::iterator;
+  using myTracks = soa::Filtered<soa::Join<aod::Tracks, aod::TrackSelection>>;
+
   const double PionMass = 0.13956995;
 
   bool performSharedDaughterCut = false;
@@ -67,41 +72,46 @@ struct FemtoscopyTask {
   O2_DEFINE_CONFIGURABLE(cfgNEtaMax, float, 0.8f, "nEtaMax");
   O2_DEFINE_CONFIGURABLE(cfgMaxPt, float, 2.5f, "MaxPt");
 
-  // Filters and input definitions
-  //#define MYFILTER
-  //#ifdef MYFILTER
-  Filter filterBit96 = (aod::track::isGlobalTrack == (uint8_t)1) || (aod::track::isGlobalTrackSDD == (uint8_t)1);
-  using myTracks = soa::Filtered<soa::Join<aod::Tracks, aod::TrackSelection>>;
-  // From correlations.cxx
-  // Filter trackFilter = (nabs(aod::track::eta) < cfgCutEta) && (aod::track::pt > cfgCutPt) && (aod::track::isGlobalTrack == (uint8_t)1);
-  //#else
-  //using myTracks = aod::Tracks;
-  //#endif
-
-  void init(o2::framework::InitContext&)
-  {
-  }
-
   // TODO: AliFemtoEventReaderAOD::CopyAODToFemtoEvent() - new task and femto data model?
 
   // Additional codes from MultSelection reader:
   // See AliPhysics/PWGCF/FEMTOSCOPY/AliFemto/AliFemtoEventReaderAODMultSelection.cxx:25
-  // Data form MultSelection task
+  // Data from MultSelection task
   // femto_event->SetCentralityV0(mult_selection->GetMultiplicityPercentile("V0M"));
   // TODO: CL1 not present in O2?
   // femto_event->SetCentralityCL1(mult_selection->GetMultiplicityPercentile("CL1"));
   // TODO: What fNormalizedMult is used for?
   // femto_event->SetNormalizedMult(lrint(10 * mult_selection->GetMultiplicityPercentile("V0M")));
 
+  Filter filterBit96 = (aod::track::isGlobalTrack == (uint8_t)1) || (aod::track::isGlobalTrackSDD == (uint8_t)1);
+  // From correlations.cxx
+  // Filter trackFilter = (nabs(aod::track::eta) < cfgCutEta) && (aod::track::pt > cfgCutPt) && (aod::track::isGlobalTrack == (uint8_t)1);
+
   // TODO: Cuts
 
   // Basic cut and monitor
-  //mecetaphitpc[aniter] = new AliFemtoBasicEventCut();
-  //mecetaphitpc[aniter]->SetEventMult(0.001,100000);
-  //mecetaphitpc[aniter]->SetVertZPos(-7,7);//cm
-  //cutPassEvMetaphitpc[aniter] = new AliFemtoCutMonitorEventMult(Form("cutPass%stpcM%i", chrgs[ichg], imult), 2000, 20000.5);
-  //cutFailEvMetaphitpc[aniter] = new AliFemtoCutMonitorEventMult(Form("cutFail%stpcM%i", chrgs[ichg], imult), 2000, 20000.5);
-  //mecetaphitpc[aniter]->AddCutMonitor(cutPassEvMetaphitpc[aniter], cutFailEvMetaphitpc[aniter]);
+  Filter basicEventCut = (aod::mult::multV0M >= 0.001) && (aod::mult::multV0M <= 100000) && 
+                         (aod::collision::posZ > -7.0) && (aod::collision::posZ < 7.0);
+
+  struct cutMonitorEventMult : public HistogramRegistry {
+    cutMonitorEventMult(char const* const name, const std::string& histSuffix, int nBins=5000, double multMax=5000.5)
+      : HistogramRegistry(name, true, {//
+          {"EvMult" + histSuffix, "Event Multiplicity", {HistogramType::kTH1D,//
+            {nBins + 1, -0.5, multMax}//
+          }},//
+          {"NormEvMult" + histSuffix, "Normalized Event Multiplicity", {HistogramType::kTH1D,//
+            {nBins + 1, -0.5, multMax}//
+          }},//
+          {"PsiEPVZERO" + histSuffix, "Event Plane Angle from VZero", {HistogramType::kTH1D,//
+            {157, -1.575, 1.565}//
+          }}//
+        }) {}
+  };
+  //fEvMult->Fill(aEvent->NumberOfTracks());
+  //fNormEvMult->Fill(aEvent->UncorrectedNumberOfPrimaries());
+  //fPsiVZERO->Fill(aEvent->ReactionPlaneAngle());
+  cutMonitorEventMult cutPassEvMetaphitpc{"cutPassEvMetaphitpc", fmt::format("cutPass%stpcM0", chrgs[ichg]), 2000, 20000.5}; 
+  cutMonitorEventMult cutFailEvMetaphitpc{"cutFailEvMetaphitpc", fmt::format("cutFail%stpcM0", chrgs[ichg]), 2000, 20000.5}; 
 
   // Single particle track cuts
   //dtc1etaphitpc[aniter] = new AliFemtoMJTrackCut();
@@ -120,10 +130,9 @@ struct FemtoscopyTask {
   // 5 events to mix, collection of size min 1
   // AliFemtoVertexMultAnalysis(7, -7.0, 7.0, 20, 0, 1000);
 
-  // Version with explicit nested loop
-  void process(soa::Join<aod::Collisions, aod::EvSels, aod::Cents>::iterator const& collision, myTracks const& tracks)
+  void process(myCollisions const& collision, myTracks const& tracks)
   {
-    LOGF(info, "Tracks for collision: %d | Trigger mask: %lld | INT7: %d | V0M: %.1f", tracks.size(), collision.bc().triggerMask(), collision.sel7(), collision.centV0M());
+    LOGF(info, "Tracks for collision: %d | Trigger mask: %lld | INT7: %d | V0M: %.1f | multV0M: %5.0f", tracks.size(), collision.bc().triggerMask(), collision.sel7(), collision.centV0M(), collision.multV0M());
 
     if (!collision.sel7())
       return;
@@ -188,7 +197,6 @@ struct FemtoscopyTask {
         values[5] = collision.posZ();
 
         same->getTrackHist()->Fill(values, CorrelationContainer::kCFStepReconstructed);
-        //mixed->getTrackHist()->Fill(values, CorrelationContainer::kCFStepReconstructed);
       }
     }
   }
