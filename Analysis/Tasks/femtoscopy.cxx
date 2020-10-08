@@ -29,6 +29,7 @@ using namespace o2::framework::expressions;
 
 #define O2_DEFINE_CONFIGURABLE(NAME, TYPE, DEFAULT, HELP) Configurable<TYPE> NAME{#NAME, DEFAULT, HELP};
 
+// Pion+pion- from pp events, deta dphi correlations
 struct FemtoscopyTask {
   using myCollisions = soa::Join<aod::Collisions, aod::EvSels, aod::Cents, aod::Mults>;
   using myCollision = soa::Join<aod::Collisions, aod::EvSels, aod::Cents, aod::Mults>::iterator;
