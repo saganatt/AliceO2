@@ -23,16 +23,67 @@
 #include <cmath>
 #include <TDirectory.h>
 
+namespace o2::aod
+{
+namespace hash
+{
+DECLARE_SOA_COLUMN(Bin, bin, int);
+} // namespace hash
+DECLARE_SOA_TABLE(Hashes, "AOD", "HASH", hash::Bin);
+
+using Hash = Hashes::iterator;
+} // namespace o2::aod
+
 using namespace o2;
 using namespace o2::framework;
 using namespace o2::framework::expressions;
 
-#define O2_DEFINE_CONFIGURABLE(NAME, TYPE, DEFAULT, HELP) Configurable<TYPE> NAME{#NAME, DEFAULT, HELP};
+// Event mixing according to multiplicity and z-vertex
+//                          bins vtx, min vtx, max vtx, bins mult, min mult, max mult
+// AliFemtoVertexMultAnalysis(7, -7.0, 7.0, 20, 0, 1000);
+struct HashTask {
+  std::vector<float> vtxBins{-7.0f, -5.0f, -3.0f, -1.0f, 1.0f, 3.0f, 5.0f, 7.0f};
+  std::vector<float> multBins{0.0f, 20.0f, 40.0f, 60.0f, 80.0f, 100.0f};
+  Produces<aod::Hashes> hashes;
+
+  // Calculate hash for an element based on 2 properties and their bins.
+  int getHash(std::vector<float> const& vtxBins, std::vector<float> const& multBins, float vtx, float mult)
+  {
+    // underflow
+    if (vtx < vtxBins[0]) {
+      return -1;
+    }
+    if (mult < multBins[0]) {
+      return -1;
+    }
+
+    for (int i = 1; i < vtxBins.size(); i++) {
+      if (vtx < vtxBins[i]) {
+        for (int j = 1; j < multBins.size(); j++) {
+          if (mult < multBins[j]) {
+            return i + j * (vtxBins.size() + 1);
+          }
+        }
+      }
+    }
+    // overflow
+    return -1;
+  }
+
+  void process(soa::Join<aod::Collisions, aod::Cents> const& collisions)
+  {
+    for (auto& collision : collisions) {
+      int hash = getHash(vtxBins, multBins, collision.posZ(), collision.centV0M());
+      LOGF(info, "Collision: %d (%f, %f) hash: %d", collision.index(), collision.posZ(), collision.centV0M(), hash);
+      hashes(hash);
+    }
+  }
+};
 
 // Pion+pion- from pp events, deta dphi correlations
 struct FemtoscopyTask {
-  using myCollisions = soa::Join<aod::Collisions, aod::EvSels, aod::Cents, aod::Mults>;
-  using myCollision = soa::Join<aod::Collisions, aod::EvSels, aod::Cents, aod::Mults>::iterator;
+  using myCollisions = soa::Join<aod::Collisions, aod::Hashes, aod::EvSels, aod::Cents, aod::Mults>;
+  using myCollision = soa::Join<aod::Collisions, aod::Hashes, aod::EvSels, aod::Cents, aod::Mults>::iterator;
   using myTracks = soa::Filtered<soa::Join<aod::Tracks, aod::TrackSelection>>;
 
   const double PionMass = 0.13956995;
@@ -64,7 +115,6 @@ struct FemtoscopyTask {
   O2_DEFINE_CONFIGURABLE(cfgIfGlobalTracks, int, 0, "Whether to use global tracks: 1 - yes, 0 - no");
   O2_DEFINE_CONFIGURABLE(cfgIfElectronRejection, int, 1, "Whether to reject electrons: 1 - yes, 0 - no");
   O2_DEFINE_CONFIGURABLE(cfgIfIsPileUp, int, 1, "Whether to pile up: 1 - yes, 0 - no");
-  // TODO: Are there 'monitors' in O2? What is this?
   O2_DEFINE_CONFIGURABLE(cfgIfMonitors, int, 1, "Whether to use monitors: 1 - yes, 0 - no");
 
   O2_DEFINE_CONFIGURABLE(cfgNSigmaVal, float, 2.0f, "nSigmaVal");
@@ -90,31 +140,17 @@ struct FemtoscopyTask {
 
   // TODO: Cuts
 
-  // Basic cut and monitor
+  // Basic cut
   Filter basicEventCut = (aod::mult::multV0M >= 0.001) && (aod::mult::multV0M <= 100000) && 
                          (aod::collision::posZ > -7.0) && (aod::collision::posZ < 7.0);
 
-  struct cutMonitorEventMult : public HistogramRegistry {
-    cutMonitorEventMult(char const* const name, const std::string& histSuffix, int nBins=5000, double multMax=5000.5)
-      : HistogramRegistry(name, true, {//
-          {"EvMult" + histSuffix, "Event Multiplicity", {HistogramType::kTH1D,//
-            {nBins + 1, -0.5, multMax}//
-          }},//
-          {"NormEvMult" + histSuffix, "Normalized Event Multiplicity", {HistogramType::kTH1D,//
-            {nBins + 1, -0.5, multMax}//
-          }},//
-          {"PsiEPVZERO" + histSuffix, "Event Plane Angle from VZero", {HistogramType::kTH1D,//
-            {157, -1.575, 1.565}//
-          }}//
-        }) {}
-  };
   //fEvMult->Fill(aEvent->NumberOfTracks());
   //fNormEvMult->Fill(aEvent->UncorrectedNumberOfPrimaries());
   //fPsiVZERO->Fill(aEvent->ReactionPlaneAngle());
-  cutMonitorEventMult cutPassEvMetaphitpc{"cutPassEvMetaphitpc", fmt::format("cutPass%stpcM0", chrgs[ichg]), 2000, 20000.5}; 
-  cutMonitorEventMult cutFailEvMetaphitpc{"cutFailEvMetaphitpc", fmt::format("cutFail%stpcM0", chrgs[ichg]), 2000, 20000.5}; 
+  //cutMonitorEventMult cutPassEvMetaphitpc{"cutPassEvMetaphitpc", fmt::format("cutPass%stpcM0", chrgs[ichg]), 2000, 20000.5};
+  //cutMonitorEventMult cutFailEvMetaphitpc{"cutFailEvMetaphitpc", fmt::format("cutFail%stpcM0", chrgs[ichg]), 2000, 20000.5};
 
-  // Single particle track cuts
+  // Single particle track cuts - to be implemented as filters
   //dtc1etaphitpc[aniter] = new AliFemtoMJTrackCut();
   //dtc1etaphitpc[aniter]->SetCharge(1.0);
   //dtc1etaphitpc[aniter]->SetEta(nEtaMin,nEtaMax);
@@ -126,78 +162,44 @@ struct FemtoscopyTask {
   // TODO: Monitors (histograms)
   // TODO: Correlation functions
 
-  // TODO: Event mixing according to multiplicity and z-vertex
-  //                          bins vtx, min vtx, max vtx, bins mult, min mult, max mult
-  // 5 events to mix, collection of size min 1
-  // AliFemtoVertexMultAnalysis(7, -7.0, 7.0, 20, 0, 1000);
-
-  void process(myCollisions const& collision, myTracks const& tracks)
+  void process(myCollisions const& collisions, myTracks const& tracks)
   {
-    LOGF(info, "Tracks for collision: %d | Trigger mask: %lld | INT7: %d | V0M: %.1f | multV0M: %5.0f", tracks.size(), collision.bc().triggerMask(), collision.sel7(), collision.centV0M(), collision.multV0M());
+    // Event mixing according to multiplicity and z-vertex
+    // FIXME: Hide internals when possible
+    collisions.bindExternalIndices(&tracks);
+    auto tracksTuple = std::make_tuple(tracks);
+    AnalysisDataProcessorBuilder::GroupSlicer slicer(collisions, tracksTuple);
+    // Strictly upper categorised collisions, for 5 combinations per bin, skipping those in entry -1
+    for (auto& [collision1, collision2] : selfCombinations("fBin", 5, -1, collisions, collisions)) {
 
-    if (!collision.sel7())
-      return;
+      LOGF(INFO, "Collisions bin: %d pair: %d (%f), %d (%f)", collision1.bin(), collision1.index(), collision1.posZ(), collision2.index(), collision2.posZ());
 
-    int bSign = 1; // TODO magnetic field from CCDB
-    const float pTCut = 1.0;
+      auto it1 = slicer.begin();
+      auto it2 = slicer.begin();
+      for (auto& slice : slicer) {
+        if (slice.groupingElement().index() == collision1.index()) {
+          it1 = slice;
+          break;
+        }
+      }
+      for (auto& slice : slicer) {
+        if (slice.groupingElement().index() == collision2.index()) {
+          it2 = slice;
+          break;
+        }
+      }
 
-    for (auto track1 = tracks.begin(); track1 != tracks.end(); ++track1) {
+      auto tracks1 = std::get<myTracks>(it1.associatedTables());
+      tracks1.bindExternalIndices(&collisions);
+      auto tracks2 = std::get<myTracks>(it2.associatedTables());
+      tracks2.bindExternalIndices(&collisions);
 
-#ifndef MYFILTER
-      if (track1.pt2() < pTCut)
-        continue;
-      if (track1.eta2() < -0.8 || track1.eta2() > 0.8)
-        continue;
-#endif
+      for (auto& [track1, track2] : combinations(CombinationsFullIndexPolicy(tracks1, tracks2))) {
+        LOGF(INFO, "Track 1: %d 2: %d", track1.index(), track2.index());
 
-      if (cfgTriggerCharge != 0 && cfgTriggerCharge * track1.charge() < 0)
-        continue;
-
-      //LOGF(info, "TRACK %f %f | %f %f | %f %f", track1.eta(), track1.eta2(), track1.phi(), track1.phi2(), track1.pt(), track1.pt2());
-
-      double eventValues[3];
-      eventValues[0] = track1.pt();
-      eventValues[1] = collision.centV0M();
-      eventValues[2] = collision.posZ();
-
-      same->getEventHist()->Fill(eventValues, CorrelationContainer::kCFStepReconstructed);
-      //mixed->getEventHist()->Fill(eventValues, CorrelationContainer::kCFStepReconstructed);
-
-      for (auto track2 = track1 + 1; track2 != tracks.end(); ++track2) {
-#ifndef MYFILTER
-        if (track2.pt2() < pTCut)
-          continue;
-        if (track2.eta2() < -0.8 || track2.eta2() > 0.8)
-          continue;
-#endif
-
-        if (cfgAssociatedCharge != 0 && cfgAssociatedCharge * track2.charge() < 0)
-          continue;
-        if (cfgPairCharge != 0 && cfgPairCharge * track1.charge() * track2.charge() < 0)
-          continue;
-
-        if (cfg.mPairCuts && conversionCuts(track1, track2))
-          continue;
-
-        if (cfgTwoTrackCut > 0 && twoTrackCut(track1, track2, bSign))
-          continue;
-
-        double values[6] = {0};
-
-        values[0] = track1.etam() - track2.etam();
-        values[1] = track1.pt();
-        values[2] = track2.pt();
-        values[3] = collision.centV0M();
-
-        values[4] = track1.phim() - track2.phim();
-        if (values[4] > 1.5 * TMath::Pi())
-          values[4] -= TMath::TwoPi();
-        if (values[4] < -0.5 * TMath::Pi())
-          values[4] += TMath::TwoPi();
-
-        values[5] = collision.posZ();
-
-        same->getTrackHist()->Fill(values, CorrelationContainer::kCFStepReconstructed);
+        // TODO: Single particle cuts
+        // TODO: Pair cuts
+        // TODO: Histogram filling
       }
     }
   }
@@ -208,5 +210,6 @@ struct FemtoscopyTask {
 WorkflowSpec defineDataProcessing(ConfigContext const&)
 {
   return WorkflowSpec{
+    adaptAnalysisTask<HashTask>("produce-hashes"),
     adaptAnalysisTask<FemtoscopyTask>("femtoscopy-task")};
 }
