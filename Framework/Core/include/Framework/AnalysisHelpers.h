@@ -486,11 +486,12 @@ struct Partition {
   {
   }
 
-  void bindTable(T& table)
+  template <typename... Ts>
+  void bindTables(T& table, Ts&... tables)
   {
-    mFiltered.reset(getTableFromFilter(table, filter));
-    bindExternalIndices(&table);
-    getBoundToExternalIndices(table);
+    setTable(table);
+    bindExternalIndices(&table, &tables...);
+    getBoundToExternalIndices(table, tables...);
   }
 
   void setTable(const T& table)
@@ -506,11 +507,11 @@ struct Partition {
     }
   }
 
-  template <typename T2>
-  void getBoundToExternalIndices(T2& table)
+  template <typename... Ts>
+  void getBoundToExternalIndices(Ts&... tables)
   {
     if (mFiltered != nullptr) {
-      table.bindExternalIndices(mFiltered.get());
+      (tables.bindExternalIndices(mFiltered.get()), ...);
     }
   }
 

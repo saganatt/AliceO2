@@ -60,15 +60,15 @@ struct ATask {
 };
 
 // Partition inside process
-// Caveat: partitioned table cannot be passed as const& to process()
+// Caveat: partitioned table and its grouping (parent) table cannot be passed as const& to process()
 struct BTask {
-  void process(aod::Collisions const& collisions, aod::Tracks& tracks)
+  void process(aod::Collisions& collisions, aod::Tracks& tracks)
   {
     for (auto& c : collisions) {
       Partition<aod::Tracks> groupedTracks = aod::track::collisionId == c.globalIndex();
-      groupedTracks.bindTable(tracks);
+      groupedTracks.bindTables(tracks, collisions);
       for (auto& t : groupedTracks) {
-        LOGF(INFO, "collision global index: %d grouped track collision id: %d", c.globalIndex(), t.collisionId());
+        LOGF(INFO, "collision global index: %d grouped track collision id: %d, collision index from track: %d", c.globalIndex(), t.collisionId(), t.collision().globalIndex());
       }
     }
   }
@@ -76,7 +76,7 @@ struct BTask {
 
 // MC example
 struct CTask {
-  void process(aod::McCollision const& collision, aod::McParticles const& particles, aod::McMotherDaughters& motherDaughters)
+  void process(aod::McCollision const& collision, aod::McParticles& particles, aod::McMotherDaughters& motherDaughters)
   {
     LOGF(INFO, "This collision has %d particles", particles.size());
 
@@ -84,16 +84,18 @@ struct CTask {
       LOGF(INFO, "Particle %d (pdg %d) has: ", particle.globalIndex(), particle.pdgCode());
       // uint32_t id = static_cast<uint32_t>(particle.globalIndex());
       Partition<aod::McMotherDaughters> daughters = aod::mcparticledaughter::motherId == particle.globalIndex();
-      daughters.bindTable(motherDaughters);
+      daughters.bindTables(motherDaughters, particles);
+
       for (auto& daughter : daughters) {
-        LOGF(INFO, "   - daughter %d (pdg %d)", daughter.globalIndex(), daughter.daughter().pdgCode());
+        //LOGF(INFO, "   - daughter %d (pdg %d)", daughter.globalIndex(), daughter.daughter().pdgCode());
+        LOGF(INFO, "   - daughter %d (pdg %d)", daughter.globalIndex(), daughter.daughterId());
       }
     }
   }
 };
 
 struct DTask {
-  void process(aod::Collision const& collision, soa::Join<aod::Tracks, aod::McTrackLabels> const& tracks, aod::McParticles const& particles, aod::McMotherDaughters& motherDaughters)
+  void process(aod::Collision const& collision, soa::Join<aod::Tracks, aod::McTrackLabels> const& tracks, aod::McParticles& particles, aod::McMotherDaughters& motherDaughters)
   {
     LOGF(INFO, "This collision has %d tracks", tracks.size());
 
@@ -101,7 +103,7 @@ struct DTask {
       auto particle = track.label(); // TODO cannot be by reference
       LOGF(INFO, "Track %d points to the MC particle %d (pdg %d)", track.globalIndex(), particle.globalIndex(), particle.pdgCode());
       Partition<aod::McMotherDaughters> mothers = aod::mcparticledaughter::daughterId == particle.globalIndex();
-      mothers.bindTable(motherDaughters);
+      mothers.bindTables(motherDaughters, particles);
       for (auto& mother : mothers) {
         LOGF(INFO, "   - mother %d (pdg %d)", mother.globalIndex(), mother.daughter().pdgCode());
       }
@@ -114,7 +116,7 @@ WorkflowSpec defineDataProcessing(ConfigContext const&)
   return WorkflowSpec{
     // adaptAnalysisTask<ATask>("consume-tracks"),
     // adaptAnalysisTask<BTask>("partition-in-process")
-    adaptAnalysisTask<CTask>("daughter-grouping"),
-    adaptAnalysisTask<DTask>("mother-grouping")
+    adaptAnalysisTask<CTask>("daughter-grouping")//,
+    //adaptAnalysisTask<DTask>("mother-grouping")
   };
 }
