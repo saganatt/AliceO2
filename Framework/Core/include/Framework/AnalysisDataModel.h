@@ -566,6 +566,18 @@ DECLARE_SOA_TABLE(McParticles, "AOD", "MCPARTICLE",
                   mcparticle::ProducedByGenerator<mcparticle::Flags>);
 using McParticle = McParticles::iterator;
 
+namespace mcparticledaughter
+{
+//TODO iron out column names
+//DECLARE_SOA_INDEX_COLUMN(McParticle, mother);
+DECLARE_SOA_INDEX_COLUMN_FULL(McParticle, mother, int32_t, McParticles, "fParticleID");
+DECLARE_SOA_INDEX_COLUMN_FULL(Daughter, daughter, int32_t, McParticles, "fDaughterID");
+}
+
+DECLARE_SOA_TABLE(McMotherDaughters, "AOD", "MCMOTHDAUGHT",
+                  o2::soa::Index<>, mcparticledaughter::McParticleId, mcparticledaughter::DaughterId);
+using McMotherDaughter = McMotherDaughters::iterator;
+
 namespace mctracklabel
 {
 DECLARE_SOA_INDEX_COLUMN_FULL(Label, label, uint32_t, McParticles, "fLabel");

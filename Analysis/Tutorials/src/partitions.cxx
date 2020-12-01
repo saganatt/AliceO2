@@ -74,9 +74,47 @@ struct BTask {
   }
 };
 
+// MC example
+struct CTask {
+  void process(aod::McCollision const& collision, aod::McParticles const& particles, aod::McMotherDaughters& motherDaughters)
+  {
+    LOGF(INFO, "This collision has %d particles", particles.size());
+
+    for (auto& particle : particles) {
+      LOGF(INFO, "Particle %d (pdg %d) has: ", particle.globalIndex(), particle.pdgCode());
+      // uint32_t id = static_cast<uint32_t>(particle.globalIndex());
+      Partition<aod::McMotherDaughters> daughters = aod::mcparticledaughter::motherId == particle.globalIndex();
+      daughters.bindTable(motherDaughters);
+      for (auto& daughter : daughters) {
+        LOGF(INFO, "   - daughter %d (pdg %d)", daughter.globalIndex(), daughter.daughter().pdgCode());
+      }
+    }
+  }
+};
+
+struct DTask {
+  void process(aod::Collision const& collision, soa::Join<aod::Tracks, aod::McTrackLabels> const& tracks, aod::McParticles const& particles, aod::McMotherDaughters& motherDaughters)
+  {
+    LOGF(INFO, "This collision has %d tracks", tracks.size());
+
+    for (auto& track : tracks) {
+      auto particle = track.label(); // TODO cannot be by reference
+      LOGF(INFO, "Track %d points to the MC particle %d (pdg %d)", track.globalIndex(), particle.globalIndex(), particle.pdgCode());
+      Partition<aod::McMotherDaughters> mothers = aod::mcparticledaughter::daughterId == particle.globalIndex();
+      mothers.bindTable(motherDaughters);
+      for (auto& mother : mothers) {
+        LOGF(INFO, "   - mother %d (pdg %d)", mother.globalIndex(), mother.daughter().pdgCode());
+      }
+    }
+  }
+};
+
 WorkflowSpec defineDataProcessing(ConfigContext const&)
 {
   return WorkflowSpec{
-    adaptAnalysisTask<ATask>("consume-tracks"),
-    adaptAnalysisTask<BTask>("partition-in-process")};
+    // adaptAnalysisTask<ATask>("consume-tracks"),
+    // adaptAnalysisTask<BTask>("partition-in-process")
+    adaptAnalysisTask<CTask>("daughter-grouping"),
+    adaptAnalysisTask<DTask>("mother-grouping")
+  };
 }
