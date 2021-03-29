@@ -173,6 +173,12 @@ o2_add_dpl_workflow(histogram-registry
                   PUBLIC_LINK_LIBRARIES O2::Framework O2::AnalysisCore O2::AnalysisDataModel
                   COMPONENT_NAME AnalysisTutorial)
 
+o2_add_dpl_workflow(simple-analysis
+                  SOURCES src/simpleAnalysis.cxx
+                  JOB_POOL analysis
+                  PUBLIC_LINK_LIBRARIES O2::Framework O2::AnalysisCore O2::AnalysisDataModel
+                  COMPONENT_NAME AnalysisTutorial)
+
 o2_add_library(ConfigurableCut
                SOURCES  src/configurableCut.cxx
                PUBLIC_LINK_LIBRARIES O2::AnalysisCore)
