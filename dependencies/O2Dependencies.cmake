@@ -98,6 +98,14 @@ set_package_properties(RapidJSON PROPERTIES TYPE REQUIRED)
 find_package(CURL)
 set_package_properties(CURL PROPERTIES TYPE REQUIRED)
 
+# Needed for find_package to work properly
+#set(ONNXRuntime\:\:ONNXRuntime_DIR ${CMAKE_CURRENT_LIST_DIR})
+set(ONNXRuntime\:\:ONNXRuntime_DIR "~/CERN_part/CERN/PID_ML_in_O2/cpp/dependencies")
+include(${ONNXRuntime\:\:ONNXRuntime_DIR}/ONNXRuntimeVersion.cmake)
+find_package(ONNXRuntime::ONNXRuntime)
+# Needed for ML ONNX models
+set_package_properties(onnxruntime PROPERTIES TYPE REQUIRED)
+
 find_package(JAliEnROOT MODULE)
 set_package_properties(JAliEnROOT PROPERTIES TYPE RECOMMENDED)
 
