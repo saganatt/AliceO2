@@ -100,7 +100,7 @@ set_package_properties(CURL PROPERTIES TYPE REQUIRED)
 
 # Needed for find_package to work properly
 #set(ONNXRuntime\:\:ONNXRuntime_DIR ${CMAKE_CURRENT_LIST_DIR})
-set(ONNXRuntime\:\:ONNXRuntime_DIR "~/CERN_part/CERN/PID_ML_in_O2/cpp/dependencies")
+set(ONNXRuntime\:\:ONNXRuntime_DIR "~/PID_ML_in_O2/cpp/dependencies")
 include(${ONNXRuntime\:\:ONNXRuntime_DIR}/ONNXRuntimeVersion.cmake)
 find_package(ONNXRuntime::ONNXRuntime)
 # Needed for ML ONNX models

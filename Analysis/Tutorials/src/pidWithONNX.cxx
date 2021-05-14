@@ -17,6 +17,23 @@
 using namespace o2;
 using namespace o2::framework;
 
+namespace o2::aod{
+  namespace pidtracks{
+  DECLARE_SOA_COLUMN(EtaEmcal, etaemcal, float);
+  DECLARE_SOA_COLUMN(PhiEmcal, phiemcal, float);
+  DECLARE_SOA_COLUMN(TPCSignal, tpcsignal, float);
+  DECLARE_SOA_COLUMN(TOFSignal, tofsignal, float);
+  DECLARE_SOA_COLUMN(Pt, pt, float);
+  DECLARE_SOA_COLUMN(PDGCode, pdgcode, float);  
+  }
+  DECLARE_SOA_TABLE(PIDTracks, "AOD", "PIDTRACKS", pidtracks::EtaEmcal, pidtracks::PhiEmcal, pidtracks::TPCSignal, pidtracks::TOFSignal, pidtracks::Pt, pidtracks::PDGCode); 
+
+using BigTracksMC = soa::Join<aod::FullTracks, aod::McTrackLabels>;
+} //namespace o2::aod
+
+
+
+
 // See https://github.com/saganatt/PID_ML_in_O2 for instructions
 
 struct ApplyOnnxModelTask {
@@ -111,8 +128,39 @@ struct ApplyOnnxModelTask {
   }
 };
 
+struct CreateTrainingTable
+{
+  //using BigTracksMC = soa::Join<aod::FullTracks, aod::McTrackLabels>;
+
+  Produces <aod::PIDTracks> pidTracksTable; 
+  void process(aod::BigTracksMC const& tracks, aod::McParticles const& mctracks)
+  {
+    //for (auto& t1 : mctracks)
+    //{
+    //  pidtracks(t1.trackEtaEmcal(),t1.trackPhiEmcal(), t1.tpcSignal(), t1.tofSignal(), t1.pt());
+    //}
+
+    for (auto& t : tracks)
+    {
+      //pidTracksTable(t.trackEtaEmcal(),t.trackPhiEmcal(), t.tpcSignal(), t.tofSignal(), t.pt());
+      for (auto& mct : mctracks)
+      {
+         if(mct.globalIndex() == t.mcParticle().globalIndex())
+         { 
+           pidTracksTable(t.trackEtaEmcal(), t.trackPhiEmcal(), t.tpcSignal(), t.tofSignal(), t.pt(), mct.pdgCode());
+         }    
+      } 
+    }
+  }
+};
+
+
+
+
+
 WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
-    adaptAnalysisTask<ApplyOnnxModelTask>(cfgc)};
+  //  adaptAnalysisTask<ApplyOnnxModelTask>(cfgc)};
+  adaptAnalysisTask<CreateTrainingTable>(cfgc)};
 }
