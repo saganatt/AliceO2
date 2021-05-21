@@ -195,11 +195,23 @@ struct MixedEventsTask {
   }
 };
 
+// Subscribing to combinations?
+struct CombinationsSubscribe {
+  // TODO: Enable combinations construction without arguments, add SetTables() like for Filters and Partitions
+  void process(soa::CombinationsGenerator<soa::CombinationsUpperIndexPolicy<aod::Collisions, aod::Collisions>> colComb)
+  {
+    for (auto& [col1, col2] : colComb) {
+      LOGF(info, "Mixed events pair: (%d, %d)", col1.index(), col2.index());
+    }
+  }
+};
+
 WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
     adaptAnalysisTask<HashTask>(cfgc),
-    adaptAnalysisTask<MixedEventsTracks>(cfgc),
+    //adaptAnalysisTask<MixedEventsTracks>(cfgc),
     adaptAnalysisTask<MixedEventsPartitionedTracks>(cfgc),
+    //adaptAnalysisTask<CombinationsSubscribe>(cfgc),
   };
 }
