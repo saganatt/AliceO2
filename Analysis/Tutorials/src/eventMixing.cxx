@@ -209,9 +209,9 @@ struct CombinationsSubscribe {
 WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
-    adaptAnalysisTask<HashTask>(cfgc),
+    //adaptAnalysisTask<HashTask>(cfgc),
     //adaptAnalysisTask<MixedEventsTracks>(cfgc),
-    adaptAnalysisTask<MixedEventsPartitionedTracks>(cfgc),
-    //adaptAnalysisTask<CombinationsSubscribe>(cfgc),
+    //adaptAnalysisTask<MixedEventsPartitionedTracks>(cfgc),
+    adaptAnalysisTask<CombinationsSubscribe>(cfgc),
   };
 }

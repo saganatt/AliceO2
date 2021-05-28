@@ -575,6 +575,9 @@ struct Partition {
   }
 };
 
+struct Pair {
+};
+
 } // namespace o2::framework
 
 namespace o2::soa
