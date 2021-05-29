@@ -29,10 +29,7 @@ DECLARE_SOA_COLUMN(P, p, float);
 DECLARE_SOA_COLUMN(PDGCode, pdgcode, float);
 } // namespace pidtracks
 DECLARE_SOA_TABLE(PIDTracks, "AOD", "PIDTRACKS", pidtracks::EtaEmcal, pidtracks::PhiEmcal, pidtracks::TPCSignal, pidtracks::TOFSignal, pidtracks::P, pidtracks::PDGCode);
-
 } //namespace o2::aod
-
-using BigTracksMC = soa::Join<aod::FullTracks, aod::McTrackLabels>;
 
 // See https://github.com/saganatt/PID_ML_in_O2 for instructions
 
