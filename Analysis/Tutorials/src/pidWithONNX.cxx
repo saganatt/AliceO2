@@ -32,6 +32,8 @@ DECLARE_SOA_TABLE(PIDTracks, "AOD", "PIDTRACKS", pidtracks::EtaEmcal, pidtracks:
 
 } //namespace o2::aod
 
+using BigTracksMC = soa::Join<aod::FullTracks, aod::McTrackLabels>;
+
 // See https://github.com/saganatt/PID_ML_in_O2 for instructions
 
 struct ApplyOnnxModelTask {
