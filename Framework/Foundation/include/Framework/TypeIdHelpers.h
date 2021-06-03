@@ -73,7 +73,7 @@ inline static std::string type_to_task_name(std::string_view& camelCase)
   str << static_cast<char>(std::tolower(camelCase[0]));
 
   for (auto it = camelCase.begin() + 1; it != camelCase.end(); ++it) {
-    if (std::isupper(*it) && *(it - 1) != '-') {
+    if (std::isupper(static_cast<char>(*it)) && *(it - 1) != '-') {
       str << "-";
     }
     str << static_cast<char>(std::tolower(*it));
