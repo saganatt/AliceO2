@@ -17,20 +17,20 @@
 using namespace o2;
 using namespace o2::framework;
 
-namespace o2::aod{
-  namespace pidtracks{
-  DECLARE_SOA_COLUMN(EtaEmcal, etaemcal, float);
-  DECLARE_SOA_COLUMN(PhiEmcal, phiemcal, float);
-  DECLARE_SOA_COLUMN(TPCSignal, tpcsignal, float);
-  DECLARE_SOA_COLUMN(TOFSignal, tofsignal, float);
-  DECLARE_SOA_COLUMN(P, p, float);
-  DECLARE_SOA_COLUMN(PDGCode, pdgcode, float);  
-  }
-  DECLARE_SOA_TABLE(PIDTracks, "AOD", "PIDTRACKS", pidtracks::EtaEmcal, pidtracks::PhiEmcal, pidtracks::TPCSignal, pidtracks::TOFSignal, pidtracks::P, pidtracks::PDGCode); 
-
+namespace o2::aod
+{
+namespace pidtracks
+{
+DECLARE_SOA_COLUMN(EtaEmcal, etaemcal, float);
+DECLARE_SOA_COLUMN(PhiEmcal, phiemcal, float);
+DECLARE_SOA_COLUMN(TPCSignal, tpcsignal, float);
+DECLARE_SOA_COLUMN(TOFSignal, tofsignal, float);
+DECLARE_SOA_COLUMN(P, p, float);
+DECLARE_SOA_COLUMN(PDGCode, pdgcode, float);
+} // namespace pidtracks
+DECLARE_SOA_TABLE(PIDTracks, "AOD", "PIDTRACKS", pidtracks::EtaEmcal, pidtracks::PhiEmcal, pidtracks::TPCSignal, pidtracks::TOFSignal, pidtracks::P, pidtracks::PDGCode);
 
 } //namespace o2::aod
-
 
 // See https://github.com/saganatt/PID_ML_in_O2 for instructions
 
@@ -126,11 +126,10 @@ struct ApplyOnnxModelTask {
   }
 };
 
-struct CreateTrainingTable
-{
+struct CreateTrainingTable {
   using BigTracksMC = soa::Join<aod::FullTracks, aod::McTrackLabels>;
 
-  Produces <aod::PIDTracks> pidTracksTable; 
+  Produces<aod::PIDTracks> pidTracksTable;
   void process(BigTracksMC const& tracks, aod::McParticles const& mctracks)
   {
 
@@ -141,11 +140,9 @@ struct CreateTrainingTable
   }
 };
 
-
-
 WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
-  //  adaptAnalysisTask<ApplyOnnxModelTask>(cfgc)};
-  adaptAnalysisTask<CreateTrainingTable>(cfgc)};
+    //  adaptAnalysisTask<ApplyOnnxModelTask>(cfgc)};
+    adaptAnalysisTask<CreateTrainingTable>(cfgc)};
 }
