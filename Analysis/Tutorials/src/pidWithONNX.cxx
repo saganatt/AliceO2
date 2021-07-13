@@ -23,15 +23,13 @@ namespace o2::aod{
   DECLARE_SOA_COLUMN(PhiEmcal, phiemcal, float);
   DECLARE_SOA_COLUMN(TPCSignal, tpcsignal, float);
   DECLARE_SOA_COLUMN(TOFSignal, tofsignal, float);
-  DECLARE_SOA_COLUMN(Pt, pt, float);
+  DECLARE_SOA_COLUMN(P, p, float);
   DECLARE_SOA_COLUMN(PDGCode, pdgcode, float);  
   }
-  DECLARE_SOA_TABLE(PIDTracks, "AOD", "PIDTRACKS", pidtracks::EtaEmcal, pidtracks::PhiEmcal, pidtracks::TPCSignal, pidtracks::TOFSignal, pidtracks::Pt, pidtracks::PDGCode); 
+  DECLARE_SOA_TABLE(PIDTracks, "AOD", "PIDTRACKS", pidtracks::EtaEmcal, pidtracks::PhiEmcal, pidtracks::TPCSignal, pidtracks::TOFSignal, pidtracks::P, pidtracks::PDGCode); 
 
-using BigTracksMC = soa::Join<aod::FullTracks, aod::McTrackLabels>;
+
 } //namespace o2::aod
-
-
 
 
 // See https://github.com/saganatt/PID_ML_in_O2 for instructions
@@ -130,31 +128,18 @@ struct ApplyOnnxModelTask {
 
 struct CreateTrainingTable
 {
-  //using BigTracksMC = soa::Join<aod::FullTracks, aod::McTrackLabels>;
+  using BigTracksMC = soa::Join<aod::FullTracks, aod::McTrackLabels>;
 
   Produces <aod::PIDTracks> pidTracksTable; 
-  void process(aod::BigTracksMC const& tracks, aod::McParticles const& mctracks)
+  void process(BigTracksMC const& tracks, aod::McParticles const& mctracks)
   {
-    //for (auto& t1 : mctracks)
-    //{
-    //  pidtracks(t1.trackEtaEmcal(),t1.trackPhiEmcal(), t1.tpcSignal(), t1.tofSignal(), t1.pt());
-    //}
 
-    for (auto& t : tracks)
-    {
-      //pidTracksTable(t.trackEtaEmcal(),t.trackPhiEmcal(), t.tpcSignal(), t.tofSignal(), t.pt());
-      for (auto& mct : mctracks)
-      {
-         if(mct.globalIndex() == t.mcParticle().globalIndex())
-         { 
-           pidTracksTable(t.trackEtaEmcal(), t.trackPhiEmcal(), t.tpcSignal(), t.tofSignal(), t.pt(), mct.pdgCode());
-         }    
-      } 
+    for (const auto& track : tracks) {
+      const auto mcParticle = track.mcParticle();
+      pidTracksTable(track.trackEtaEmcal(), track.trackPhiEmcal(), track.tpcSignal(), track.tofSignal(), track.p(), mcParticle.pdgCode());
     }
   }
 };
-
-
 
 
 
