@@ -83,6 +83,26 @@ struct HistogramsWithFilters {
   }
 };
 
+struct HistogramsWithTPC {
+  HistogramRegistry registry{
+    "registry",
+    {
+      {"eta", "#eta", {HistType::kTH1F, {{102, -2.01, 2.01}}}},                            //
+      {"ptToPt", "ptToPt", {HistType::kTH2F, {{100, -0.01, 10.01}, {100, -0.01, 10.01}}}}, //
+      {"TPCSignal", "TPC signal", {HistType::kTH2F, {{100, 0, 10, "pt"}, {100, 0, 600, "tpc"}}}} //
+    }                                                                                      //
+  };
+
+  // If we fill histograms with filters, we need to provide full tables
+  // aod::Tracks instead of aod::Track
+  void process(aod::FullTrack const& track)
+  {
+    //registry.fill<aod::track::Eta>(HIST("eta"), tracks, aod::track::eta > 0.0f);
+    //registry.fill<aod::track::Pt, aod::track::Pt>(HIST("ptToPt"), tracks, aod::track::pt < 5.0f);
+    registry.fill(HIST("TPCSignal"), track.pt(), track.tpcSignal());
+  }
+};
+
 // For more information and advanced examples - presentation about histogram registry:
 // https://indico.cern.ch/event/1014566/contributions/4265979/attachments/2209930/3740599/Histogram%20Manager%20S%26C%20Days%2017.03.2021.pdf
 // example tasks: Analysis/Tutorials/src/histogramRegistry.cxx
@@ -93,5 +113,6 @@ WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
   return WorkflowSpec{
     adaptAnalysisTask<SimpleHistogramTaskWithRuntimeDefinition>(cfgc),
     adaptAnalysisTask<SimpleHistogramTask>(cfgc),
-    adaptAnalysisTask<HistogramsWithFilters>(cfgc)};
+    adaptAnalysisTask<HistogramsWithFilters>(cfgc),
+    adaptAnalysisTask<HistogramsWithTPC>(cfgc)};
 }
