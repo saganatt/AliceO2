@@ -206,12 +206,24 @@ struct CombinationsSubscribe {
   }
 };
 
+struct PairSubscribe {
+  Pair<"fBin", 5, float, aod::Collisions, aod::Tracks> pair(-1.0);
+
+  void process(aod::Collisions const& collisions, aod::Tracks const& tracks)
+  {
+    for (auto& [c1, t1, c2, t2] : pair) {
+      LOGF(info, "Mixed event tracks pair: (%d, %d) from events (%d, %d)", t1.index(), t2.index(), col1.index(), col2.index());
+    }
+  }
+};
+
 WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
     //adaptAnalysisTask<HashTask>(cfgc),
     //adaptAnalysisTask<MixedEventsTracks>(cfgc),
     //adaptAnalysisTask<MixedEventsPartitionedTracks>(cfgc),
-    adaptAnalysisTask<CombinationsSubscribe>(cfgc),
+    //adaptAnalysisTask<CombinationsSubscribe>(cfgc),
+    adaptAnalysisTask<PairSubscribe>(cfgc),
   };
 }

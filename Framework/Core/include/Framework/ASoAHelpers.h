@@ -174,6 +174,16 @@ struct CombinationsIndexPolicyBase {
     }
   }
 
+  void setTables(const Ts&... tables)
+  {
+    mIsEnd = false;
+    mMaxOffset = IndicesType(tables.end().index...);
+    mCurrent = CombinationType(tables.begin()...);
+    if (((tables.size() == 0) || ...)) {
+      this->mIsEnd = true;
+    }
+  }
+
   void moveToEnd()
   {
     constexpr auto k = sizeof...(Ts);

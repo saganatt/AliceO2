@@ -465,6 +465,7 @@ struct AnalysisDataProcessorBuilder {
       homogeneous_apply_refs([&groupingTable](auto& x) {
         PartitionManager<std::decay_t<decltype(x)>>::bindExternalIndices(x, &groupingTable);
         PartitionManager<std::decay_t<decltype(x)>>::getBoundToExternalIndices(x, groupingTable);
+        PairManager<std::decay_t<decltype(x)>>::setPair(x, groupingTable);
         return true;
       },
                              task);
@@ -488,6 +489,7 @@ struct AnalysisDataProcessorBuilder {
           PartitionManager<std::decay_t<decltype(t)>>::setPartition(t, x);
           PartitionManager<std::decay_t<decltype(t)>>::bindExternalIndices(t, &x);
           PartitionManager<std::decay_t<decltype(t)>>::getBoundToExternalIndices(t, x);
+          PairManager<std::decay_t<decltype(t)>>::setPair(x, groupingTable, std::get<std::decay_t<Associated>>(associatedTables)...);
           return true;
         },
                                task);

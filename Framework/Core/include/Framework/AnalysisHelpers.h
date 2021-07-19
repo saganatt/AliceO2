@@ -575,7 +575,155 @@ struct Partition {
   }
 };
 
+template <typename P1, typename P2, typename G>
+struct PairGenerator : public P1, public P2 {
+  using PairIteratorType = std::tuple<typename G::iterator, typename A::iterator..., typename G::iterator, typename A::iterator...>;
+  using GroupSlicer = AnalysisDataProcessorBuilder::GroupSlicer;
+
+  struct PairIterator : public std::iterator<std::forward_iterator_tag, PairIteratorType>, public P1, public P2 {
+   public:
+    using reference = PairIteratorType&;
+    using value_type = PairIteratorType;
+    using pointer = PairIteratorType*;
+    using iterator_category = std::forward_iterator_tag;
+
+    PairIterator() = default;
+    PairIterator(const P1& groupingPolicy, const G& grouping, const GroupSlicer& slicer) : P1(groupingPolicy), P2(), mGrouping(grouping), mSlicer(slicer) {}
+
+    PairIterator(PairIterator const&) = default;
+    PairIterator& operator=(PairIterator const&) = default;
+    ~PairIterator() = default;
+
+    void setAssociatedPolicy()
+    {
+      auto& [g1, g2] = P1::mCurrent;
+      //P1::CombinationType currentGrouping = P1::mCurrent;
+      auto it1 = mSlicer.begin();
+      auto it2 = mSlicer.begin();
+      for (auto& slice : mSlicer) {
+        if (slice.groupingElement().index() == g1.index()) {
+          it1 = slice;
+          break;
+        }
+      }
+      for (auto& slice : mSlicer) {
+        if (slice.groupingElement().index() == g2.index()) {
+          it2 = slice;
+          break;
+        }
+      }
+      auto associated1 = std::get<A...>(it1.associatedTables());
+      associated1.bindExternalIndices(&mGrouping);
+      auto associated2 = std::get<A...>(it2.associatedTables());
+      associated2.bindExternalIndices(&mGrouping);
+
+      P2::setTables(associated1, associated2);
+    }
+
+    // prefix increment
+    PairIterator& operator++()
+    {
+      if (!P1::mIsEnd) {
+        if (P2::mIsEnd) {
+          P1::addOne();
+          setAssociatedPolicy();
+        } else {
+          P2::addOne();
+        }
+      }
+      return *this;
+    }
+    // postfix increment
+    PairIterator operator++(int /*unused*/)
+    {
+      PairIterator copy(*this);
+      operator++();
+      return copy;
+    }
+    // return reference
+    reference operator*()
+    {
+      auto& [g1, g2] = P1::mCurrent;
+      auto& [a1, a2] = P2::mCurrent;
+      return std::tuple(g1, a1, g2, a2);
+    }
+    bool operator==(const PairIterator& rh)
+    {
+      return (this->isEnd() && rh.isEnd()) || (*this == *rh);
+    }
+    bool operator!=(const PairIterator& rh)
+    {
+      return !(*this == rh);
+    }
+    bool isEnd()
+    {
+      return P1::mIsEnd && P2::mIsEnd;
+    }
+
+   private:
+    GroupSlicer mSlicer;
+    const G& mGrouping;
+  };
+
+  using iterator = typename PairIterator;
+  using const_iterator = typename PairIterator;
+
+  inline iterator begin()
+  {
+    return iterator(mBegin);
+  }
+  inline iterator end()
+  {
+    return iterator(mEnd);
+  }
+  inline const_iterator begin() const
+  {
+    return iterator(mBegin);
+  }
+  inline const_iterator end() const
+  {
+    return iterator(mEnd);
+  }
+
+  PairGenerator() = default;
+  //PairGenerator(const P1& groupingPolicy, const P2& associatedPolicy) : mBegin(groupingPolicy, associatedPolicy), mEnd(groupingPolicy, associatedPolicy)
+  //{
+  //  mEnd.moveToEnd();
+  //}
+  ~PairGenerator() = default;
+
+  void setPolicies(const P1& groupingPolicy, const P2& associatedPolicy, const G& grouping, const GroupSlicer& slicer)
+  {
+    mBegin = iterator(groupingPolicy, associatedPolicy, grouping, slicer);
+    mEnd = iterator(groupingPolicy, associatedPolicy, grouping, slicer);
+    mEnd.moveToEnd();
+  }
+
+ private:
+  iterator mBegin;
+  iterator mEnd;
+};
+
+template <std::string category, int catNeighbours, typename T1, typename G, typename... A>
 struct Pair {
+  using GroupingPolicy = o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G>;
+  using AssociatedPolicy = o2::soa::CombinationsFullIndexPolicy<A...>;
+  using GroupingGenerator = o2::soa::CombinationsGenerator<GroupingPolicy>;
+  using AssociatedGenerator = o2::soa::CombinationsGenerator<>;
+  using GroupSlicer = AnalysisDataProcessorBuilder::GroupSlicer;
+
+  Pair(const T1& outsider){} : mGenerator(), mOutsider(outsider) {} //GroupingPolicy(category, catNeighbours, outsider), AssociatedPolicy()), mOutsider(outsider) {}
+
+  void setTables(const G& grouping, const A&... associated)
+  {
+    grouping.bindExternalIndices(&associated...);
+    auto associatedTuple = std::make_tuple(associated...);
+    mGenerator.setPolicies(GroupingPolicy(category, catNeigbours, mOutsider, grouping, grouping), AssociatedPolicy(associated...), grouping, GroupSlicer(grouping, associatedTuple));
+  }
+
+ private:
+  const T1 mOutsider;
+  PairGenerator<GroupingPolicy, AssociatedPolicy, G> mGenerator;
 };
 
 } // namespace o2::framework
