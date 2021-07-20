@@ -1,0 +1,25 @@
+var structo2_1_1benchmark_1_1gpuState =
+[
+    [ "computeScratchPtrs", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#acf9aaad65b9606cfcbc97f1da9f846d0", null ],
+    [ "getHostBuffers", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#adeb4f698e6af64aad7c3bd67b027cf17", null ],
+    [ "getMaxChunks", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#adf9d04f122e2bbcd552769c5284e96cf", null ],
+    [ "getNKernelLaunches", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a1ecf8f497599450f70347b0b8fd2a896", null ],
+    [ "getPartitionCapacity", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#acd7f84c1120ea4069c7ba118cd0ab3fd", null ],
+    [ "getScratchPtrs", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#aa2d7009f1d4cf21c322ea688809ff6e0", null ],
+    [ "chunkReservedGB", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a687efc6615930625571769c61605c6cd", null ],
+    [ "deviceCopyInputsPtr", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a9bf3bd693ef224bfb9e6d2539eb35b8a", null ],
+    [ "deviceReadResultsPtr", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a7f3a7cadc41b3b8f1eb6d922357756d2", null ],
+    [ "deviceWriteResultsPtr", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a6a454484547a795eba8235f1026055ee", null ],
+    [ "gpuBuffersHost", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a0ce83cb519389a1407402a419977acfb", null ],
+    [ "hostCopyInputsVector", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a01f73ef03baf7d80c3a48e806837b653", null ],
+    [ "hostReadResultsVector", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a2ee2f528aec23aefd2d8aa969bdd952d", null ],
+    [ "hostWriteResultsVector", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#afe866d85f50b8caab36f8c00694b06a2", null ],
+    [ "iterations", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a4eab5bec561cefabe3b20a5dec29f703", null ],
+    [ "nMaxThreadsPerBlock", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#afe30991d6347dae8efe578f0b6e19f3a", null ],
+    [ "nMaxThreadsPerDimension", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a0d7bb75e29324f40717e0285c0625d32", null ],
+    [ "nMultiprocessors", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#af396be0a08ed4cf7b9d229f2c129c2de", null ],
+    [ "partAddrOnHost", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a032c79c6caba7e82a21911a1d801adce", null ],
+    [ "scratchPtr", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#ad3f60b311c843853e5751eca88bd1bd7", null ],
+    [ "scratchSize", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a2c578f55a259cdfffa72ed1595a6a817", null ],
+    [ "totalMemory", "d1/dd1/structo2_1_1benchmark_1_1gpuState.html#a2397144ba2fbaf6018eb5a8717e7dbcd", null ]
+];

@@ -1,0 +1,27 @@
+var structrichPidQaMc =
+[
+    [ "Trks", "dd/de8/structrichPidQaMc.html#a68d1e56c7b6585150ffa63c7ea685e2f", null ],
+    [ "addParticleHistos", "dd/de8/structrichPidQaMc.html#a140840a43b20d72ccd550acc456be682", null ],
+    [ "fillNsigma", "dd/de8/structrichPidQaMc.html#a41d16d8a1771cddcc6c8150550b4da06", null ],
+    [ "init", "dd/de8/structrichPidQaMc.html#a9eb9f160f1721eebc6c387c5186b0bdf", null ],
+    [ "makelogaxis", "dd/de8/structrichPidQaMc.html#a74ba45ac067a7e111b5c8d9ec07a49d3", null ],
+    [ "process", "dd/de8/structrichPidQaMc.html#a1e21519b01e63abfb3bfd9c920ce6ec9", null ],
+    [ "histos", "dd/de8/structrichPidQaMc.html#ad6ed0293f11d4130f9fea7cd2e9f3943", null ],
+    [ "logAxis", "dd/de8/structrichPidQaMc.html#a1a5c56791eafbe2f4ee777c5f1506c50", null ],
+    [ "maxDelta", "dd/de8/structrichPidQaMc.html#a5c67290e798fa35e2e144404b302cfee", null ],
+    [ "maxEta", "dd/de8/structrichPidQaMc.html#a5a9317c73238e8a607ee6b6c4cf39c7f", null ],
+    [ "maxLength", "dd/de8/structrichPidQaMc.html#a6cfa58a7aa005bc7096d237fb67aa46e", null ],
+    [ "maxNsigma", "dd/de8/structrichPidQaMc.html#a180562ded5d29e35b76baa0463d503dc", null ],
+    [ "maxP", "dd/de8/structrichPidQaMc.html#a6534774e8e8eccafd7f4d1e57c44731f", null ],
+    [ "minDelta", "dd/de8/structrichPidQaMc.html#a21b226b065871b84f01084cd86c5d6ba", null ],
+    [ "minEta", "dd/de8/structrichPidQaMc.html#a6076530e125927c5ea084c7c9922dc91", null ],
+    [ "minLength", "dd/de8/structrichPidQaMc.html#a72cafeb8be03fc6cbf3569bbb55c2107", null ],
+    [ "minNsigma", "dd/de8/structrichPidQaMc.html#a37cf06462546852e64f4bf078b7cdeb4", null ],
+    [ "minP", "dd/de8/structrichPidQaMc.html#a2d33783739e497073d77593c5c1e2337", null ],
+    [ "nBinsDelta", "dd/de8/structrichPidQaMc.html#a15a0f9bb7b4bf6ed6543e75be8e59744", null ],
+    [ "nBinsNsigma", "dd/de8/structrichPidQaMc.html#a55e6bf919cbce18fa8474eb43c339cac", null ],
+    [ "nBinsP", "dd/de8/structrichPidQaMc.html#af56fa2f045c57d0f17b0ec95741cfd66", null ],
+    [ "pdgCode", "dd/de8/structrichPidQaMc.html#a9cdb314c6b0c7f3a48c032cc9964222a", null ],
+    [ "useOnlyPhysicsPrimary", "dd/de8/structrichPidQaMc.html#af747c9c9e83ba471d9818b0be94daee2", null ],
+    [ "useTOF", "dd/de8/structrichPidQaMc.html#a1ffe75a7e29a413fbb371fd49af43d51", null ]
+];

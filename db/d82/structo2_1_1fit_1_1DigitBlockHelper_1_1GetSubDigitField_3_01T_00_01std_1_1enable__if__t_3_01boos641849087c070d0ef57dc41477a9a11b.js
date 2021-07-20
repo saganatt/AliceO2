@@ -1,0 +1,5 @@
+var structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField_3_01T_00_01std_1_1enable__if__t_3_01boos641849087c070d0ef57dc41477a9a11b =
+[
+    [ "type", "db/d82/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField_3_01T_00_01std_1_1enable__if__t_3_01boos641849087c070d0ef57dc41477a9a11b.html#a0829d102bfaca4a36f69c4b898b1374f", null ],
+    [ "vector_type", "db/d82/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField_3_01T_00_01std_1_1enable__if__t_3_01boos641849087c070d0ef57dc41477a9a11b.html#af9054e9701b8ba220fe12034e2cf82cf", null ]
+];

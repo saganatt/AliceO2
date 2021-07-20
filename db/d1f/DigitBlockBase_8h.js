@@ -1,0 +1,27 @@
+var DigitBlockBase_8h =
+[
+    [ "IsSpecOfType", "db/d6a/structo2_1_1fit_1_1DigitBlockHelper_1_1IsSpecOfType.html", null ],
+    [ "IsSpecOfType< Template, Template< T... > >", "dd/dc3/structo2_1_1fit_1_1DigitBlockHelper_1_1IsSpecOfType_3_01Template_00_01Template_3_01T_8_8_8_01_4_01_4.html", null ],
+    [ "HasRef", "de/d96/structo2_1_1fit_1_1DigitBlockHelper_1_1HasRef.html", null ],
+    [ "HasRef< T, std::enable_if_t< std::is_same< decltype(std::declval< T >().ref), typename o2::dataformats::RangeReference< int, int > >::value > >", "d2/d2a/structo2_1_1fit_1_1DigitBlockHelper_1_1HasRef_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is__sam3198bdc4d85418be1e648027a47dde2f.html", null ],
+    [ "HasRef< T, std::enable_if_t< std::is_same< decltype(std::declval< T >().ref), typename o2::dataformats::RangeRefComp< 6 > >::value > >", "d0/d33/structo2_1_1fit_1_1DigitBlockHelper_1_1HasRef_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is__sam91305c8f5c20db345f01826b47681bdc.html", null ],
+    [ "HasRef< T, std::enable_if_t< std::is_same< decltype(std::declval< T >().ref), typename o2::dataformats::RangeRefComp< 5 > >::value > >", "df/d4c/structo2_1_1fit_1_1DigitBlockHelper_1_1HasRef_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is__sama7d1b49d01e81c9b253fbdfc23c1e2f6.html", null ],
+    [ "HasArrayRef", "d6/da0/structo2_1_1fit_1_1DigitBlockHelper_1_1HasArrayRef.html", null ],
+    [ "HasArrayRef< T, std::enable_if_t< std::is_same< decltype(std::declval< T >().ref), typename std::array< typename o2::dataformats::RangeReference< int, int >, std::tuple_size< decltype(std::declval< T >().ref)>::value > >::value > >", "de/dfb/structo2_1_1fit_1_1DigitBlockHelper_1_1HasArrayRef_3_01T_00_01std_1_1enable__if__t_3_01std_1_1isb2c0e01641d1d789b6053d3820afb468.html", null ],
+    [ "HasArrayRef< T, std::enable_if_t< std::is_same< decltype(std::declval< T >().ref), typename std::array< typename o2::dataformats::RangeRefComp< 6 >, std::tuple_size< decltype(std::declval< T >().ref)>::value > >::value > >", "d8/d8f/structo2_1_1fit_1_1DigitBlockHelper_1_1HasArrayRef_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is196fd1aaae7463a45cb182d7e739e04e.html", null ],
+    [ "HasArrayRef< T, std::enable_if_t< std::is_same< decltype(std::declval< T >().ref), typename std::array< typename o2::dataformats::RangeRefComp< 5 >, std::tuple_size< decltype(std::declval< T >().ref)>::value > >::value > >", "d0/df5/structo2_1_1fit_1_1DigitBlockHelper_1_1HasArrayRef_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is601f0d867645fb9da8d80311fc852be1.html", null ],
+    [ "GetDigitRefsN", "df/ddf/structo2_1_1fit_1_1DigitBlockHelper_1_1GetDigitRefsN.html", null ],
+    [ "GetDigitRefsN< T, std::enable_if_t< HasRef< T >::value > >", "d6/de1/structo2_1_1fit_1_1DigitBlockHelper_1_1GetDigitRefsN_3_01T_00_01std_1_1enable__if__t_3_01HasRef_3_01T_01_4_1_1value_01_4_01_4.html", null ],
+    [ "value > 1)> >", "d2/d44/structo2_1_1fit_1_1DigitBlockHelper_1_1GetDigitRefsN_3_01T_00_01std_1_1enable__if__t_3_01HasArra625948cbaa920dc6fa28cff86888a90e.html", null ],
+    [ "HasIntRecord", "d6/df1/structo2_1_1fit_1_1DigitBlockHelper_1_1HasIntRecord.html", null ],
+    [ "HasIntRecord< T, std::enable_if_t< std::is_same< decltype(std::declval< T >().mIntRecord), o2::InteractionRecord >::value > >", "d1/d01/structo2_1_1fit_1_1DigitBlockHelper_1_1HasIntRecord_3_01T_00_01std_1_1enable__if__t_3_01std_1_1i2c31b2eee81e4b1dbeef137eeb7bb225.html", null ],
+    [ "HasIntRecord< T, std::enable_if_t< std::is_same< decltype(std::declval< T >().ir), o2::InteractionRecord >::value > >", "d6/d66/structo2_1_1fit_1_1DigitBlockHelper_1_1HasIntRecord_3_01T_00_01std_1_1enable__if__t_3_01std_1_1i391013611f73af3af3fa8e86e5bba61e.html", null ],
+    [ "GetSubDigitField", "d4/da5/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField.html", "d4/da5/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField" ],
+    [ "GetSubDigitField< T, std::enable_if_t< boost::mpl::size< T >::value==1 > >", "db/d82/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField_3_01T_00_01std_1_1enable__if__t_3_01boos641849087c070d0ef57dc41477a9a11b.html", "db/d82/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField_3_01T_00_01std_1_1enable__if__t_3_01boos641849087c070d0ef57dc41477a9a11b" ],
+    [ "value > 1)> >", "d1/d2f/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField_3_01T_00_01std_1_1enable__if__t_3_07boos89f332f704ef7f66df24de4904688a1c.html", "d1/d2f/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField_3_01T_00_01std_1_1enable__if__t_3_07boos89f332f704ef7f66df24de4904688a1c" ],
+    [ "MakeTuple", "dc/dac/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField_01_4_1_1MakeTuple.html", null ],
+    [ "MakeTuple< std::tuple< Args... >, LastArg >", "de/d26/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField_01_4_1_1MakeTuple_3_01std_1_1tuple_3_01A467416dce2a7ddaec85ceaab25851a34.html", "de/d26/structo2_1_1fit_1_1DigitBlockHelper_1_1GetSubDigitField_01_4_1_1MakeTuple_3_01std_1_1tuple_3_01A467416dce2a7ddaec85ceaab25851a34" ],
+    [ "DigitBlockBase", "d0/dd4/classo2_1_1fit_1_1DigitBlockBase.html", "d0/dd4/classo2_1_1fit_1_1DigitBlockBase" ],
+    [ "GetVecSingleSubDigit", "db/d1f/DigitBlockBase_8h.html#a4ef0be80f87681f3bd48eefe1f40d98e", null ],
+    [ "GetVecSubDigit", "db/d1f/DigitBlockBase_8h.html#ae566d6fc293a3d8eed31c1b06526ee2a", null ]
+];

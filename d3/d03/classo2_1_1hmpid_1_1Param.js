@@ -1,0 +1,86 @@
+var classo2_1_1hmpid_1_1Param =
+[
+    [ "EChamberData", "d3/d03/classo2_1_1hmpid_1_1Param.html#a7d4d0784bdd3ea5066414bf72eaf5c89", [
+      [ "kMinCh", "d3/d03/classo2_1_1hmpid_1_1Param.html#a7d4d0784bdd3ea5066414bf72eaf5c89a54de5f3c2cafdcd676e4f230ec75379c", null ],
+      [ "kMaxCh", "d3/d03/classo2_1_1hmpid_1_1Param.html#a7d4d0784bdd3ea5066414bf72eaf5c89ac51d093bb7c6e6473e620f7b9d30ac89", null ],
+      [ "kMinPc", "d3/d03/classo2_1_1hmpid_1_1Param.html#a7d4d0784bdd3ea5066414bf72eaf5c89a41e1611b348aeb70640871e70a0457ea", null ],
+      [ "kMaxPc", "d3/d03/classo2_1_1hmpid_1_1Param.html#a7d4d0784bdd3ea5066414bf72eaf5c89ac8f6febbdb0b35b5d667af2fafab8966", null ]
+    ] ],
+    [ "EPadxData", "d3/d03/classo2_1_1hmpid_1_1Param.html#a15a0c908b57f3903ecb99e8fc73d17c8", [
+      [ "kPadPcX", "d3/d03/classo2_1_1hmpid_1_1Param.html#a15a0c908b57f3903ecb99e8fc73d17c8aa2b5e742708f32024d5dd4738e38988d", null ],
+      [ "kMinPx", "d3/d03/classo2_1_1hmpid_1_1Param.html#a15a0c908b57f3903ecb99e8fc73d17c8af9e06119fd5753d833c6f80374ca700e", null ],
+      [ "kMaxPx", "d3/d03/classo2_1_1hmpid_1_1Param.html#a15a0c908b57f3903ecb99e8fc73d17c8ad156b5056f70ab67980b434521940539", null ],
+      [ "kMaxPcx", "d3/d03/classo2_1_1hmpid_1_1Param.html#a15a0c908b57f3903ecb99e8fc73d17c8a88343ca244fe7928a2ac96afd687b1ef", null ]
+    ] ],
+    [ "EPadyData", "d3/d03/classo2_1_1hmpid_1_1Param.html#a31ce06f7e314d1e98c3c35037fdcfbd3", [
+      [ "kPadPcY", "d3/d03/classo2_1_1hmpid_1_1Param.html#a31ce06f7e314d1e98c3c35037fdcfbd3a24ef1422629160a7cf3d22a6082e9197", null ],
+      [ "kMinPy", "d3/d03/classo2_1_1hmpid_1_1Param.html#a31ce06f7e314d1e98c3c35037fdcfbd3a5adcde0d62ac83345c0c1960acbb85e9", null ],
+      [ "kMaxPy", "d3/d03/classo2_1_1hmpid_1_1Param.html#a31ce06f7e314d1e98c3c35037fdcfbd3a072d7128ffdb748c18f29bd14c729328", null ],
+      [ "kMaxPcy", "d3/d03/classo2_1_1hmpid_1_1Param.html#a31ce06f7e314d1e98c3c35037fdcfbd3a832e4958ccd47b4a01c38a9acefc39e6", null ]
+    ] ],
+    [ "EPedestalData", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae77d2de8fd9010603bf5ae9104c1d61f", [
+      [ "kPadMeanZeroCharge", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae77d2de8fd9010603bf5ae9104c1d61fa1664498bb37c1b12c80257aa4230d2c1", null ],
+      [ "kPadSigmaZeroCharge", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae77d2de8fd9010603bf5ae9104c1d61fa51667e947f4d69390b5a90cc80c641a7", null ],
+      [ "kPadMeanMasked", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae77d2de8fd9010603bf5ae9104c1d61fa2f1dca2cff6a1c475ae1ce71db9feb07", null ],
+      [ "kPadSigmaMasked", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae77d2de8fd9010603bf5ae9104c1d61fab0fe1b4dc9a145a0c90eb32673738bbc", null ]
+    ] ],
+    [ "EPlaneId", "d3/d03/classo2_1_1hmpid_1_1Param.html#ab12a034b08a562eca6064f2eb205fd77", [
+      [ "kPc", "d3/d03/classo2_1_1hmpid_1_1Param.html#ab12a034b08a562eca6064f2eb205fd77a38199a50f608ff3a73e16a824a3b3ff9", null ],
+      [ "kRad", "d3/d03/classo2_1_1hmpid_1_1Param.html#ab12a034b08a562eca6064f2eb205fd77ab8364c03d21b4529e679fd5ecd6562e1", null ],
+      [ "kAnod", "d3/d03/classo2_1_1hmpid_1_1Param.html#ab12a034b08a562eca6064f2eb205fd77aa4dc4d253fcd9597b276534c0819804e", null ]
+    ] ],
+    [ "ETrackingFlags", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae00dff31fb4ec4f430b2faef50707886", [
+      [ "kMipDistCut", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae00dff31fb4ec4f430b2faef50707886a775ed42870250c714373b1d8d77ef78e", null ],
+      [ "kMipQdcCut", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae00dff31fb4ec4f430b2faef50707886aa244eed09a3962474729e5fceae8fa72", null ],
+      [ "kNoPhotAccept", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae00dff31fb4ec4f430b2faef50707886a630a28b692b7f18228aa16937b78d76e", null ]
+    ] ],
+    [ "~Param", "d3/d03/classo2_1_1hmpid_1_1Param.html#af5bbcb23a752af3ce377c1716a86d0c4", null ],
+    [ "Param", "d3/d03/classo2_1_1hmpid_1_1Param.html#ad4503923300cde000d5ff2fea0fcadbe", null ],
+    [ "chPhiMax", "d3/d03/classo2_1_1hmpid_1_1Param.html#aadaef097128f5022f9f6fa004168ce33", null ],
+    [ "chPhiMin", "d3/d03/classo2_1_1hmpid_1_1Param.html#a5eceb078ac9f6398dda5dca09182e529", null ],
+    [ "chThMax", "d3/d03/classo2_1_1hmpid_1_1Param.html#a53c9b8817b40159260ac405a36c85bfb", null ],
+    [ "chThMin", "d3/d03/classo2_1_1hmpid_1_1Param.html#a4eaa8c20a614f95240303c28952b36fd", null ],
+    [ "distCut", "d3/d03/classo2_1_1hmpid_1_1Param.html#a3d9356183a5ed21c6907d11dfbcb7538", null ],
+    [ "gapIdx", "d3/d03/classo2_1_1hmpid_1_1Param.html#abb700b85d7cde61340c58636c6277404", null ],
+    [ "gapThick", "d3/d03/classo2_1_1hmpid_1_1Param.html#ada3e488fc4ee41a23c853922c155d00e", null ],
+    [ "getEPhotMean", "d3/d03/classo2_1_1hmpid_1_1Param.html#a5a8df15b6d6995407a1187785cf740fc", null ],
+    [ "getInstType", "d3/d03/classo2_1_1hmpid_1_1Param.html#aa5b1e67905470d1b6f27b1669c23e43a", null ],
+    [ "getRefIdx", "d3/d03/classo2_1_1hmpid_1_1Param.html#a214350d52e0c1a83976d0b1f9d08dc25", null ],
+    [ "lors2Mars", "d3/d03/classo2_1_1hmpid_1_1Param.html#a998ab698638802cf554bf0911e3b2fc8", null ],
+    [ "lors2Mars", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae05cb6040cccfb1527f91564a7e3055c", null ],
+    [ "lors2MarsVec", "d3/d03/classo2_1_1hmpid_1_1Param.html#a43d1c94ace3755f3f424c04c7ddd2a5c", null ],
+    [ "mars2Lors", "d3/d03/classo2_1_1hmpid_1_1Param.html#a27776b485a5eff44cb32d3e0da3dce8a", null ],
+    [ "mars2LorsVec", "d3/d03/classo2_1_1hmpid_1_1Param.html#ab277619935f97a85ec45048ff48cb968", null ],
+    [ "meanIdxRad", "d3/d03/classo2_1_1hmpid_1_1Param.html#a649c83d9b6c123553130dd91476d557a", null ],
+    [ "meanIdxWin", "d3/d03/classo2_1_1hmpid_1_1Param.html#a98544330347ee1e76c01faaa0327b437", null ],
+    [ "multCut", "d3/d03/classo2_1_1hmpid_1_1Param.html#ae7f5f6004a3ce6ca1cb386b254ccfe0e", null ],
+    [ "norm", "d3/d03/classo2_1_1hmpid_1_1Param.html#a827a6082aa9791bdfa13232ce5f02012", null ],
+    [ "norm", "d3/d03/classo2_1_1hmpid_1_1Param.html#a65390b70820078f6870486a125f8212c", null ],
+    [ "point", "d3/d03/classo2_1_1hmpid_1_1Param.html#a678b632b4a8bc3826f5f82e826fcac24", null ],
+    [ "print", "d3/d03/classo2_1_1hmpid_1_1Param.html#a5658d22b0666598265b7ed9d10e5e83d", null ],
+    [ "printChStatus", "d3/d03/classo2_1_1hmpid_1_1Param.html#a784ef72b949559e42a8c3873864de742", null ],
+    [ "qCut", "d3/d03/classo2_1_1hmpid_1_1Param.html#a4a0e79f8e2d3b4faa2ffb1189131dd8f", null ],
+    [ "radThick", "d3/d03/classo2_1_1hmpid_1_1Param.html#a84b346160159363aeefad0d367844789", null ],
+    [ "setChStatus", "d3/d03/classo2_1_1hmpid_1_1Param.html#a1cd6af5004f4e48bd0063237d90e34e7", null ],
+    [ "setEPhotMean", "d3/d03/classo2_1_1hmpid_1_1Param.html#ac353911c19477561dc2c70d90aba04b8", null ],
+    [ "setGeomAccept", "d3/d03/classo2_1_1hmpid_1_1Param.html#aff73c37c34a159ca1d697358d51d59d8", null ],
+    [ "setInstanceType", "d3/d03/classo2_1_1hmpid_1_1Param.html#a562536904d87024c17e5e532e0c73e53", null ],
+    [ "setNSigmas", "d3/d03/classo2_1_1hmpid_1_1Param.html#a8cc13da634def54d7c86db1a39f9017d", null ],
+    [ "setPcStatus", "d3/d03/classo2_1_1hmpid_1_1Param.html#a4252bf2eb5de3836db7b284bc285a943", null ],
+    [ "setRefIdx", "d3/d03/classo2_1_1hmpid_1_1Param.html#a1c1fbef438beda0459107100822bad56", null ],
+    [ "setSectStatus", "d3/d03/classo2_1_1hmpid_1_1Param.html#a18c1d35159d247fe940f7c58fa8eb216", null ],
+    [ "setTemp", "d3/d03/classo2_1_1hmpid_1_1Param.html#a8d75dd0965d714e912285b97eb4cb3cf", null ],
+    [ "setThreshold", "d3/d03/classo2_1_1hmpid_1_1Param.html#ac4591cb43885f8d8476682b15911cb80", null ],
+    [ "sigCrom", "d3/d03/classo2_1_1hmpid_1_1Param.html#a49803539d8c2d01407d162563b618ab5", null ],
+    [ "sigGeom", "d3/d03/classo2_1_1hmpid_1_1Param.html#a99ca70886eef3133a1f778e9736185e5", null ],
+    [ "sigLoc", "d3/d03/classo2_1_1hmpid_1_1Param.html#ad3a349ee8fa7b578704cc3f850440f3a", null ],
+    [ "sigma2", "d3/d03/classo2_1_1hmpid_1_1Param.html#add34ad618f67e2da0121ccd6db82a04f", null ],
+    [ "winIdx", "d3/d03/classo2_1_1hmpid_1_1Param.html#a947150f8e7c9d233e3382bcbe0ac8881", null ],
+    [ "winThick", "d3/d03/classo2_1_1hmpid_1_1Param.html#a0bda8f6f30aeb1a0b58fe15a40a6a35c", null ],
+    [ "mM", "d3/d03/classo2_1_1hmpid_1_1Param.html#aac777b06c6fe3ca14c787fc7c7bf6b15", null ],
+    [ "mPhotEMean", "d3/d03/classo2_1_1hmpid_1_1Param.html#a1cef21a8dbfd258f4b67594b0859fcd2", null ],
+    [ "mRefIdx", "d3/d03/classo2_1_1hmpid_1_1Param.html#a4a267dc78bfe7b837aa585f573408e34", null ],
+    [ "mTemp", "d3/d03/classo2_1_1hmpid_1_1Param.html#a7523a2933d9b1caeb95a4a7bf9b9aca0", null ],
+    [ "mX", "d3/d03/classo2_1_1hmpid_1_1Param.html#a0b06419c95c33be9e7c3f1517c511e2b", null ],
+    [ "mY", "d3/d03/classo2_1_1hmpid_1_1Param.html#aa21d53fbcc6439a7a988a15e265bfbc6", null ]
+];
