@@ -29,30 +29,21 @@ namespace o2::framework
 
 template <typename ANY>
 struct PairManager {
-  template <typename... T2s>
-  static void setPair(ANY&, T2s&...)
+  template <typename TG, typename... T2s>
+  static void setPair(ANY&, TG&, T2s&...)
   {
   }
 };
 
-template <std::string category, int catNeighbours, typename T1, typename G, typename... A>
+template <Pair<const char* category, int catNeighbours, typename T1, typename G, typename... A>>
 struct PairManager<Pair<category, catNeighbours, T1, G, A...>> {
-  template <typename T2>
-  static void doSetPair(Pair<category, catNeighbours, T1, G, A...>& pair, T2& table)
-  {
-    if constexpr (std::disjunction_v<std::is_same<G, T2>, std::is_same<A, T2>>) {
-      pair.setTable(table);
-    }
-  }
-
-  template <typename... T2s>
+  template <typename TG, typename... T2s>
   static void setPair(Pair<category, catNeighbours, T1, G, A...>& pair, TG& grouping, T2s&... associated)
   {
     static_assert(sizeof...(T2s) > 0, "There must be associated tables in the process() for a correct pair");
     if constexpr (std::conjunction_v<std::is_same<G, TG>, std::is_same<A, T2s>...>) {
       pair.setTables(grouping, associated...);
     }
-    //(doSetPair(pair, tables), ...);
   }
 };
 

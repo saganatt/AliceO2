@@ -11,9 +11,11 @@
 #ifndef o2_framework_AnalysisHelpers_H_DEFINED
 #define o2_framework_AnalysisHelpers_H_DEFINED
 
+#include "Framework/ASoAHelpers.h"
 #include "Framework/Traits.h"
 #include "Framework/TableBuilder.h"
 #include "Framework/AnalysisDataModel.h"
+#include "Framework/GroupSlicer.h"
 #include "Framework/OutputSpec.h"
 #include "Framework/OutputRef.h"
 #include "Framework/InputSpec.h"
@@ -575,10 +577,9 @@ struct Partition {
   }
 };
 
-template <typename P1, typename P2, typename G>
+template <typename P1, typename P2, typename G, typename... A>
 struct PairGenerator : public P1, public P2 {
   using PairIteratorType = std::tuple<typename G::iterator, typename A::iterator..., typename G::iterator, typename A::iterator...>;
-  using GroupSlicer = AnalysisDataProcessorBuilder::GroupSlicer;
 
   struct PairIterator : public std::iterator<std::forward_iterator_tag, PairIteratorType>, public P1, public P2 {
    public:
@@ -588,7 +589,7 @@ struct PairGenerator : public P1, public P2 {
     using iterator_category = std::forward_iterator_tag;
 
     PairIterator() = default;
-    PairIterator(const P1& groupingPolicy, const G& grouping, const GroupSlicer& slicer) : P1(groupingPolicy), P2(), mGrouping(grouping), mSlicer(slicer) {}
+    PairIterator(const P1& groupingPolicy, const G& grouping, const GroupSlicer<G, A...>& slicer) : P1(groupingPolicy), P2(), mGrouping(grouping), mSlicer(slicer) {}
 
     PairIterator(PairIterator const&) = default;
     PairIterator& operator=(PairIterator const&) = default;
@@ -661,12 +662,12 @@ struct PairGenerator : public P1, public P2 {
     }
 
    private:
-    GroupSlicer mSlicer;
+    GroupSlicer<G, A...> mSlicer;
     const G& mGrouping;
   };
 
-  using iterator = typename PairIterator;
-  using const_iterator = typename PairIterator;
+  using iterator = PairIterator;
+  using const_iterator = PairIterator;
 
   inline iterator begin()
   {
@@ -692,7 +693,7 @@ struct PairGenerator : public P1, public P2 {
   //}
   ~PairGenerator() = default;
 
-  void setPolicies(const P1& groupingPolicy, const P2& associatedPolicy, const G& grouping, const GroupSlicer& slicer)
+  void setPolicies(const P1& groupingPolicy, const P2& associatedPolicy, const G& grouping, const GroupSlicer<G, A...>& slicer)
   {
     mBegin = iterator(groupingPolicy, associatedPolicy, grouping, slicer);
     mEnd = iterator(groupingPolicy, associatedPolicy, grouping, slicer);
@@ -704,26 +705,26 @@ struct PairGenerator : public P1, public P2 {
   iterator mEnd;
 };
 
-template <std::string category, int catNeighbours, typename T1, typename G, typename... A>
+template <const char* category, int catNeighbours, typename T1, typename G, typename... A>
 struct Pair {
   using GroupingPolicy = o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G>;
   using AssociatedPolicy = o2::soa::CombinationsFullIndexPolicy<A...>;
-  using GroupingGenerator = o2::soa::CombinationsGenerator<GroupingPolicy>;
-  using AssociatedGenerator = o2::soa::CombinationsGenerator<>;
-  using GroupSlicer = AnalysisDataProcessorBuilder::GroupSlicer;
 
-  Pair(const T1& outsider){} : mGenerator(), mOutsider(outsider) {} //GroupingPolicy(category, catNeighbours, outsider), AssociatedPolicy()), mOutsider(outsider) {}
+  Pair(const T1& outsider) : mGenerator(), mOutsider(outsider)
+  { //GroupingPolicy(category, catNeighbours, outsider), AssociatedPolicy()), mOutsider(outsider) {}
+    static_assert(!soa::is_soa_iterator_t<std::decay_t<G>>::value, "You cannot use table iterators for pairing");
+  }
 
   void setTables(const G& grouping, const A&... associated)
   {
     grouping.bindExternalIndices(&associated...);
     auto associatedTuple = std::make_tuple(associated...);
-    mGenerator.setPolicies(GroupingPolicy(category, catNeigbours, mOutsider, grouping, grouping), AssociatedPolicy(associated...), grouping, GroupSlicer(grouping, associatedTuple));
+    mGenerator.setPolicies(GroupingPolicy(category, catNeighbours, mOutsider, grouping, grouping), AssociatedPolicy(associated...), grouping, GroupSlicer<G, A...>(grouping, associatedTuple));
   }
 
  private:
   const T1 mOutsider;
-  PairGenerator<GroupingPolicy, AssociatedPolicy, G> mGenerator;
+  PairGenerator<GroupingPolicy, AssociatedPolicy, G, A...> mGenerator;
 };
 
 } // namespace o2::framework

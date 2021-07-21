@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(GroupSlicerOneAssociated)
   BOOST_CHECK_EQUAL(t.size(), 10 * 20);
 
   auto tt = std::make_tuple(t);
-  o2::framework::AnalysisDataProcessorBuilder::GroupSlicer g(e, tt);
+  o2::framework::GroupSlicer g(e, tt);
 
   unsigned int count = 0;
   for (auto& slice : g) {
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(GroupSlicerSeveralAssociated)
   BOOST_CHECK_EQUAL(tu.size(), 10 * 20);
 
   auto tt = std::make_tuple(tx, ty, tz, tu);
-  o2::framework::AnalysisDataProcessorBuilder::GroupSlicer g(e, tt);
+  o2::framework::GroupSlicer g(e, tt);
 
   unsigned int count = 0;
   for (auto& slice : g) {
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(GroupSlicerMismatchedGroups)
   BOOST_CHECK_EQUAL(t.size(), 10 * (20 - 5));
 
   auto tt = std::make_tuple(t);
-  o2::framework::AnalysisDataProcessorBuilder::GroupSlicer g(e, tt);
+  o2::framework::GroupSlicer g(e, tt);
 
   unsigned int count = 0;
   for (auto& slice : g) {
@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_CASE(GroupSlicerMismatchedFilteredGroups)
   BOOST_CHECK_EQUAL(t.size(), 10 * (20 - 4));
 
   auto tt = std::make_tuple(t);
-  o2::framework::AnalysisDataProcessorBuilder::GroupSlicer g(e, tt);
+  o2::framework::GroupSlicer g(e, tt);
 
   unsigned int count = 0;
 
@@ -310,7 +310,7 @@ BOOST_AUTO_TEST_CASE(EmptySliceables)
   BOOST_CHECK_EQUAL(t.size(), 0);
 
   auto tt = std::make_tuple(t);
-  o2::framework::AnalysisDataProcessorBuilder::GroupSlicer g(e, tt);
+  o2::framework::GroupSlicer g(e, tt);
 
   unsigned int count = 0;
   for (auto& slice : g) {
