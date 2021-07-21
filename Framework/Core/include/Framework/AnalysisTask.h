@@ -265,11 +265,11 @@ struct AnalysisDataProcessorBuilder {
       auto associatedTables = AnalysisDataProcessorBuilder::bindAssociatedTables<PI>(inputs, processingFunction, infos);
       auto binder = [&](auto&& x) {
         x.bindExternalIndices(&groupingTable, &std::get<std::decay_t<Associated>>(associatedTables)...);
-        homogeneous_apply_refs([&x](auto& t) {
+        homogeneous_apply_refs([&x, &groupingTable, &associatedTables](auto& t) {
           PartitionManager<std::decay_t<decltype(t)>>::setPartition(t, x);
           PartitionManager<std::decay_t<decltype(t)>>::bindExternalIndices(t, &x);
           PartitionManager<std::decay_t<decltype(t)>>::getBoundToExternalIndices(t, x);
-          PairManager<std::decay_t<decltype(t)>>::setPair(x, groupingTable, std::get<std::decay_t<Associated>>(associatedTables)...);
+          PairManager<std::decay_t<decltype(t)>>::setPair(t, groupingTable, std::get<std::decay_t<Associated>>(associatedTables)...);
           return true;
         },
                                task);

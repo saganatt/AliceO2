@@ -78,7 +78,7 @@ struct MixedEventsTracks {
     // grouping of tracks according to collision
     collisions.bindExternalIndices(&tracks);
     auto tracksTuple = std::make_tuple(tracks);
-    AnalysisDataProcessorBuilder::GroupSlicer slicer(collisions, tracksTuple);
+    GroupSlicer slicer(collisions, tracksTuple);
 
     // Strictly upper categorised collisions
     for (auto& [c1, c2] : selfCombinations("fBin", 5, -1, join(hashes, collisions), join(hashes, collisions))) {
@@ -121,7 +121,7 @@ struct MixedEventsPartitionedTracks {
   {
     collisions.bindExternalIndices(&tracks);
     auto tracksTuple = std::make_tuple(tracks);
-    AnalysisDataProcessorBuilder::GroupSlicer slicer(collisions, tracksTuple);
+    GroupSlicer slicer(collisions, tracksTuple);
 
     // Strictly upper categorised collisions
     for (auto& [c1, c2] : selfCombinations("fBin", 5, -1, join(hashes, collisions), join(hashes, collisions))) {
@@ -207,12 +207,16 @@ struct CombinationsSubscribe {
 };
 
 struct PairSubscribe {
-  Pair<"fBin", 5, float, aod::Collisions, aod::Tracks> pair(-1.0);
+  //Pair<aod::Collisions, aod::Tracks, float> pair{"fBin", 5, -1.0f};
 
-  void process(aod::Collisions const& collisions, aod::Tracks const& tracks)
+  void process(aod::Collisions& collisions, aod::Tracks const& tracks)
   {
-    for (auto& [c1, t1, c2, t2] : pair) {
-      LOGF(info, "Mixed event tracks pair: (%d, %d) from events (%d, %d)", t1.index(), t2.index(), col1.index(), col2.index());
+    auto pair = definePair(collisions, tracks, "fBin", 5, -1.0f);
+    for (auto& [col1, tracks1, col2, tracks2] : pair) {
+      LOGF(info, "Mixed event collisions: (%d, %d)", col1.index(), col2.index());
+      for (auto& [t1, t2] : combinations(CombinationsFullIndexPolicy(tracks1, tracks2))) {
+        LOGF(info, "Mixed event tracks pair: (%d, %d) from events (%d, %d)", t1.index(), t2.index(), col1.index(), col2.index());
+      }
     }
   }
 };

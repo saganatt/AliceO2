@@ -204,6 +204,7 @@ template <typename... Ts>
 struct CombinationsUpperIndexPolicy : public CombinationsIndexPolicyBase<Ts...> {
   using CombinationType = typename CombinationsIndexPolicyBase<Ts...>::CombinationType;
 
+  CombinationsUpperIndexPolicy() : CombinationsIndexPolicyBase<Ts...>() {}
   CombinationsUpperIndexPolicy(const Ts&... tables) : CombinationsIndexPolicyBase<Ts...>(tables...) {}
 
   void addOne()
@@ -287,6 +288,7 @@ template <typename... Ts>
 struct CombinationsFullIndexPolicy : public CombinationsIndexPolicyBase<Ts...> {
   using CombinationType = typename CombinationsIndexPolicyBase<Ts...>::CombinationType;
 
+  CombinationsFullIndexPolicy() : CombinationsIndexPolicyBase<Ts...>() {}
   CombinationsFullIndexPolicy(const Ts&... tables) : CombinationsIndexPolicyBase<Ts...>(tables...) {}
 
   void addOne()
@@ -316,6 +318,7 @@ struct CombinationsBlockIndexPolicyBase : public CombinationsIndexPolicyBase<Ts.
   using CombinationType = typename CombinationsIndexPolicyBase<Ts...>::CombinationType;
   using IndicesType = typename NTupleType<uint64_t, sizeof...(Ts)>::type;
 
+  CombinationsBlockIndexPolicyBase() : CombinationsIndexPolicyBase<Ts...>() {}
   CombinationsBlockIndexPolicyBase(const std::string& categoryColumnName, int categoryNeighbours, const T& outsider) : CombinationsIndexPolicyBase<Ts...>(), mSlidingWindowSize(categoryNeighbours + 1), mCategoryColumnName(categoryColumnName), mCategoryNeighbours(categoryNeighbours), mOutsider(outsider) {}
   CombinationsBlockIndexPolicyBase(const std::string& categoryColumnName, int categoryNeighbours, const T& outsider, const Ts&... tables) : CombinationsIndexPolicyBase<Ts...>(tables...), mSlidingWindowSize(categoryNeighbours + 1), mCategoryColumnName(categoryColumnName), mCategoryNeighbours(categoryNeighbours), mOutsider(outsider)
   {
@@ -363,6 +366,7 @@ template <typename T, typename... Ts>
 struct CombinationsBlockUpperIndexPolicy : public CombinationsBlockIndexPolicyBase<T, Ts...> {
   using CombinationType = typename CombinationsBlockIndexPolicyBase<T, Ts...>::CombinationType;
 
+  CombinationsBlockUpperIndexPolicy() : CombinationsBlockIndexPolicyBase<T, Ts...>() {}
   CombinationsBlockUpperIndexPolicy(const std::string& categoryColumnName, int categoryNeighbours, const T& outsider, const Ts&... tables) : CombinationsBlockIndexPolicyBase<T, Ts...>(categoryColumnName, categoryNeighbours, outsider, tables...)
   {
     if (!this->mIsEnd) {
@@ -458,6 +462,7 @@ struct CombinationsBlockFullIndexPolicy : public CombinationsBlockIndexPolicyBas
   using CombinationType = typename CombinationsBlockIndexPolicyBase<T, Ts...>::CombinationType;
   using IndicesType = typename NTupleType<uint64_t, sizeof...(Ts)>::type;
 
+  CombinationsBlockFullIndexPolicy() : CombinationsBlockIndexPolicyBase<T, Ts...>(), mCurrentlyFixed(0) {}
   CombinationsBlockFullIndexPolicy(const std::string& categoryColumnName, int categoryNeighbours, const T& outsider, const Ts&... tables) : CombinationsBlockIndexPolicyBase<T, Ts...>(categoryColumnName, categoryNeighbours, outsider, tables...), mCurrentlyFixed(0)
   {
     if (!this->mIsEnd) {
@@ -572,6 +577,7 @@ struct CombinationsBlockSameIndexPolicyBase : public CombinationsIndexPolicyBase
   using CombinationType = typename CombinationsIndexPolicyBase<T, Ts...>::CombinationType;
   using IndicesType = typename NTupleType<uint64_t, sizeof...(Ts) + 1>::type;
 
+  CombinationsBlockSameIndexPolicyBase() : CombinationsIndexPolicyBase<T, Ts...>() {}
   CombinationsBlockSameIndexPolicyBase(const std::string& categoryColumnName, int categoryNeighbours, const T1& outsider, int minWindowSize) : CombinationsIndexPolicyBase<T, Ts...>(), mSlidingWindowSize(categoryNeighbours + 1), mCategoryColumnName(categoryColumnName), mCategoryNeighbours(categoryNeighbours), mOutsider(outsider), mMinWindowSize(minWindowSize) {}
   CombinationsBlockSameIndexPolicyBase(const std::string& categoryColumnName, int categoryNeighbours, const T1& outsider, int minWindowSize, const T& table, const Ts&... tables) : CombinationsIndexPolicyBase<T, Ts...>(table, tables...), mSlidingWindowSize(categoryNeighbours + 1), mCategoryColumnName(categoryColumnName), mCategoryNeighbours(categoryNeighbours), mOutsider(outsider), mMinWindowSize(minWindowSize)
   {
@@ -612,6 +618,7 @@ template <typename T1, typename... Ts>
 struct CombinationsBlockUpperSameIndexPolicy : public CombinationsBlockSameIndexPolicyBase<T1, Ts...> {
   using CombinationType = typename CombinationsBlockSameIndexPolicyBase<T1, Ts...>::CombinationType;
 
+  CombinationsBlockUpperSameIndexPolicy() : CombinationsBlockSameIndexPolicyBase<T1, Ts...>() {}
   CombinationsBlockUpperSameIndexPolicy(const std::string& categoryColumnName, int categoryNeighbours, const T1& outsider, const Ts&... tables) : CombinationsBlockSameIndexPolicyBase<T1, Ts...>(categoryColumnName, categoryNeighbours, outsider, 1, tables...)
   {
     if (!this->mIsEnd) {
@@ -690,6 +697,7 @@ template <typename T1, typename... Ts>
 struct CombinationsBlockStrictlyUpperSameIndexPolicy : public CombinationsBlockSameIndexPolicyBase<T1, Ts...> {
   using CombinationType = typename CombinationsBlockSameIndexPolicyBase<T1, Ts...>::CombinationType;
 
+  CombinationsBlockStrictlyUpperSameIndexPolicy() : CombinationsBlockSameIndexPolicyBase<T1, Ts...>() {}
   CombinationsBlockStrictlyUpperSameIndexPolicy(const std::string& categoryColumnName, int categoryNeighbours, const T1& outsider) : CombinationsBlockSameIndexPolicyBase<T1, Ts...>(categoryColumnName, categoryNeighbours, outsider, sizeof...(Ts) + 1) {}
   CombinationsBlockStrictlyUpperSameIndexPolicy(const std::string& categoryColumnName, int categoryNeighbours, const T1& outsider, const Ts&... tables) : CombinationsBlockSameIndexPolicyBase<T1, Ts...>(categoryColumnName, categoryNeighbours, outsider, sizeof...(Ts) + 1, tables...)
   {
@@ -772,6 +780,7 @@ template <typename T1, typename... Ts>
 struct CombinationsBlockFullSameIndexPolicy : public CombinationsBlockSameIndexPolicyBase<T1, Ts...> {
   using CombinationType = typename CombinationsBlockSameIndexPolicyBase<T1, Ts...>::CombinationType;
 
+  CombinationsBlockFullSameIndexPolicy() : CombinationsBlockSameIndexPolicyBase<T1, Ts...>(), mCurrentlyFixed(0) {}
   CombinationsBlockFullSameIndexPolicy(const std::string& categoryColumnName, int categoryNeighbours, const T1& outsider, const Ts&... tables) : CombinationsBlockSameIndexPolicyBase<T1, Ts...>(categoryColumnName, categoryNeighbours, outsider, 1, tables...), mCurrentlyFixed(0)
   {
     if (!this->mIsEnd) {

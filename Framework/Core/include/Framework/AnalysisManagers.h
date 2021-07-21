@@ -12,6 +12,7 @@
 #ifndef FRAMEWORK_ANALYSISMANAGERS_H
 #define FRAMEWORK_ANALYSISMANAGERS_H
 #include "Framework/AnalysisHelpers.h"
+#include "Framework/Pair.h"
 #include "Framework/Kernels.h"
 #include "Framework/ASoA.h"
 #include "Framework/ProcessingContext.h"
@@ -35,15 +36,21 @@ struct PairManager {
   }
 };
 
-template <Pair<const char* category, int catNeighbours, typename T1, typename G, typename... A>>
-struct PairManager<Pair<category, catNeighbours, T1, G, A...>> {
-  template <typename TG, typename... T2s>
-  static void setPair(Pair<category, catNeighbours, T1, G, A...>& pair, TG& grouping, T2s&... associated)
+template <typename G, typename A, typename T1>
+struct PairManager<Pair<G, A, T1>> {
+  template <typename TG, typename T2>
+  static void doSetPair(Pair<G, A, T1>& pair, TG& grouping, T2& associated)
   {
-    static_assert(sizeof...(T2s) > 0, "There must be associated tables in the process() for a correct pair");
-    if constexpr (std::conjunction_v<std::is_same<G, TG>, std::is_same<A, T2s>...>) {
-      pair.setTables(grouping, associated...);
+    if constexpr (std::conjunction_v<std::is_same<G, TG>, std::is_same<A, T2>>) {
+      pair.setTables(grouping, associated);
     }
+  }
+
+  template <typename TG, typename... T2s>
+  static void setPair(Pair<G, A, T1>& pair, TG& grouping, T2s&... associated)
+  {
+    static_assert(sizeof...(T2s) > 0, "There must be associated tables in process() for a correct pair");
+    (doSetPair(pair, grouping, associated), ...);
   }
 };
 
