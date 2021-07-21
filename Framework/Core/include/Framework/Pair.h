@@ -20,7 +20,7 @@ namespace o2::framework
 {
 
 template <typename G, typename A, typename T1>
-struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
+struct Pair {
   using PairIteratorType = std::tuple<typename G::iterator, A, typename G::iterator, A>;
   using GroupingPolicy = o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<T1, G, G>;
 
@@ -31,7 +31,7 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
     using pointer = PairIteratorType*;
     using iterator_category = std::forward_iterator_tag;
 
-    PairIterator() = default;
+    PairIterator(const GroupingPolicy& groupingPolicy) : GroupingPolicy(groupingPolicy) {}
     PairIterator(const GroupingPolicy& groupingPolicy, const G& grouping, const std::shared_ptr<GroupSlicer<G, A>>&& slicer_ptr) : GroupingPolicy(groupingPolicy), mGrouping{std::make_shared<G>(&grouping)}, mSlicer{std::move(slicer_ptr)} {}
 
     PairIterator(PairIterator const&) = default;
@@ -40,8 +40,7 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
 
     std::tuple<A, A> groupAssociated()
     {
-      auto& [g1, g2] = GroupingPolicy::mCurrent;
-      //GroupingPolicy::CombinationType currentGrouping = GroupingPolicy::mCurrent;
+      auto [g1, g2] = GroupingPolicy::mCurrent;
       auto it1 = mSlicer->begin();
       auto it2 = mSlicer->begin();
       for (auto& slice : *mSlicer) {
@@ -57,13 +56,13 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
         }
       }
       auto associated1 = std::get<A>(it1.associatedTables());
-      associated1.bindExternalIndices(&mGrouping);
+      associated1.bindExternalIndices(mGrouping.get());
       auto associated2 = std::get<A>(it2.associatedTables());
-      associated2.bindExternalIndices(&mGrouping);
+      associated2.bindExternalIndices(mGrouping.get());
       return std::tuple(associated1, associated2);
     }
 
-    std::tuple<typename G::iterator, A, typename G::iterator, A> getCurrentGroupedPair()
+    std::tuple<typename G::iterator, A, typename G::iterator, A> getCurrentGroupedPair() const
     {
       auto [a1, a2] = groupAssociated();
       auto [g1, g2] = GroupingPolicy::mCurrent;
@@ -81,7 +80,7 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
       if (!this->mIsEnd) {
         this->addOne();
       }
-      return *this;
+      return getCurrentGroupedPair();
     }
     // postfix increment
     PairIterator operator++(int /*unused*/)
@@ -93,11 +92,12 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
     // return reference
     reference operator*()
     {
-      return getCurrentGroupedPair();
+      return *this;
+      //return getCurrentGroupedPair();
     }
     bool operator==(const PairIterator& rh)
     {
-      return (this->mIsEnd && rh.mIsEnd) || (this->getCurrentGroupedPair == rh.getCurrentGroupedPair);
+      return (this->mIsEnd && rh.mIsEnd) || (this->getCurrentGroupedPair() == rh.getCurrentGroupedPair());
     }
     bool operator!=(const PairIterator& rh)
     {
@@ -107,6 +107,7 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
    private:
     std::shared_ptr<GroupSlicer<G, A>> mSlicer = nullptr;
     std::shared_ptr<G> mGrouping = nullptr;
+    std::tuple<typename G::iterator, A, typename G::iterator, A> mCurrentGroupedPair;
   };
 
   using iterator = PairIterator;
@@ -129,7 +130,7 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
     return iterator(mEnd);
   }
 
-  Pair(const char* category, int catNeighbours, const T1& outsider) : mBegin(), mEnd(), mCategory(category), mCatNeighbours(catNeighbours), mOutsider(outsider) {}
+  Pair(const char* category, int catNeighbours, const T1& outsider) : mBegin(GroupingPolicy(mCategory, mCatNeighbours, mOutsider)), mEnd(GroupingPolicy(mCategory, mCatNeighbours, mOutsider)), mCategory(category), mCatNeighbours(catNeighbours), mOutsider(outsider) {}
   Pair(G& grouping, const std::shared_ptr<GroupSlicer<G, A>>&& slicer_ptr, const char* category, int catNeighbours, const T1& outsider) :
         mCategory(category), mCatNeighbours(catNeighbours), mOutsider(outsider),
         mBegin(GroupingPolicy(mCategory, mCatNeighbours, mOutsider, grouping, grouping), grouping, std::move(slicer_ptr)),
