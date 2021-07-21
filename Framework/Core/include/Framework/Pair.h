@@ -19,12 +19,12 @@
 namespace o2::framework
 {
 
-template <typename G, typename A, typename T1>
-struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
-  using PairIteratorType = std::tuple<typename G::iterator, A, typename G::iterator, A>;
+template <typename AssociatedPolicy, typename G, typename A, typename T1>
+struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G>, AssociatedPolicy<A, A> {
+  using PairIteratorType = std::tuple<typename G::iterator, typename A::iterator, typename G::iterator, typename A::iterator>;
   using GroupingPolicy = o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<T1, G, G>;
 
-  struct PairIterator : public std::iterator<std::forward_iterator_tag, PairIteratorType>, public GroupingPolicy {
+  struct PairIterator : public std::iterator<std::forward_iterator_tag, PairIteratorType>, public GroupingPolicy, public AssociatedPolicy {
    public:
     using reference = PairIteratorType&;
     using value_type = PairIteratorType;
@@ -32,7 +32,7 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
     using iterator_category = std::forward_iterator_tag;
 
     PairIterator() = default;
-    PairIterator(const GroupingPolicy& groupingPolicy, const G& grouping, const std::shared_ptr<GroupSlicer<G, A>>&& slicer_ptr) : GroupingPolicy(groupingPolicy), mGrouping{std::make_shared<G>(&grouping)}, mSlicer{std::move(slicer_ptr)} {}
+    PairIterator(const GroupingPolicy& groupingPolicy, const AssociatedPolicy& associatedPolicy, const G& grouping, const std::shared_ptr<GroupSlicer<G, A>>&& slicer_ptr) : GroupingPolicy(groupingPolicy), AssociatedPolicy(associatedPolicy), mGrouping{std::make_shared<G>(&grouping)}, mSlicer{std::move(slicer_ptr)} {}
 
     PairIterator(PairIterator const&) = default;
     PairIterator& operator=(PairIterator const&) = default;
@@ -41,7 +41,6 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
     std::tuple<A, A> groupAssociated()
     {
       auto& [g1, g2] = GroupingPolicy::mCurrent;
-      //GroupingPolicy::CombinationType currentGrouping = GroupingPolicy::mCurrent;
       auto it1 = mSlicer->begin();
       auto it2 = mSlicer->begin();
       for (auto& slice : *mSlicer) {
@@ -60,26 +59,37 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
       associated1.bindExternalIndices(&mGrouping);
       auto associated2 = std::get<A>(it2.associatedTables());
       associated2.bindExternalIndices(&mGrouping);
-      return std::tuple(associated1, associated2);
+      AssociatedPolicy::setTables(associated1, associated2);
     }
 
-    std::tuple<typename G::iterator, A, typename G::iterator, A> getCurrentGroupedPair()
+    std::tuple<typename G::iterator, typename::A, typename G::iterator, typename::A> getCurrentGroupedPair()
     {
-      auto [a1, a2] = groupAssociated();
+      auto [a1, a2] = AssociatedPolicy::mCurrent;
       auto [g1, g2] = GroupingPolicy::mCurrent;
-      return std::make_tuple<typename G::iterator, A, typename G::iterator, A>(std::move(g1), std::move(a1), std::move(g2), std::move(a2));
+      return std::make_tuple(std::move(g1), std::move(a1), std::move(g2), std::move(a2));
     }
 
     void moveToEnd()
     {
       GroupingPolicy::moveToEnd();
+      groupAssociated();
+      AssociatedPolicy::moveToEnd();
+    }
+
+    bool isEnd() {
+      return GroupingPolicy::mIsEnd && AssociatedPolicy::mIsEnd;
     }
 
     // prefix increment
     PairIterator& operator++()
     {
-      if (!this->mIsEnd) {
-        this->addOne();
+      if (!isEnd()) {
+        if (AssociatedPolicy::mIsEnd) {
+          GroupingPolicy::addOne();
+          groupAssociated();
+        } else {
+          AssociatedPolicy::addOne();
+        }
       }
       return *this;
     }
@@ -97,7 +107,7 @@ struct Pair : o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<G, G> {
     }
     bool operator==(const PairIterator& rh)
     {
-      return (this->mIsEnd && rh.mIsEnd) || (this->getCurrentGroupedPair == rh.getCurrentGroupedPair);
+      return (this->isEnd() && rh.isEnd()) || (this->mCurrentGroupedPair == rh.mCurrentGroupedPair);
     }
     bool operator!=(const PairIterator& rh)
     {
