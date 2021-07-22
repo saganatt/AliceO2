@@ -331,8 +331,8 @@ struct DQEventMixing {
     events.bindExternalIndices(&muons);
     auto tracksTuple = std::make_tuple(tracks);
     auto muonsTuple = std::make_tuple(muons);
-    AnalysisDataProcessorBuilder::GroupSlicer slicerTracks(events, tracksTuple);
-    AnalysisDataProcessorBuilder::GroupSlicer slicerMuons(events, muonsTuple);
+    GroupSlicer slicerTracks(events, tracksTuple);
+    GroupSlicer slicerMuons(events, muonsTuple);
 
     // Strictly upper categorised collisions, for 100 combinations per bin, skipping those in entry -1
     for (auto& [event1, event2] : selfCombinations("fMixingHash", 100, -1, events, events)) {

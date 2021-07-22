@@ -207,11 +207,13 @@ struct CombinationsSubscribe {
 };
 
 struct PairSubscribe {
-  //Pair<aod::Collisions, aod::Tracks, float> pair{"fBin", 5, -1.0f};
+  using myCollisions = soa::Join<aod::Collisions, aod::Hashes>;
+  //using myCollisions = aod::Collisions;
+  Pair<myCollisions, aod::Tracks, int> pair{"fBin", 5, -1};
 
-  void process(aod::Collisions& collisions, aod::Tracks const& tracks)
+  void process(myCollisions& collisions, aod::Tracks const& tracks)
   {
-    auto pair = definePair(collisions, tracks, "fBin", 5, -1.0f);
+    //auto pair = definePair(collisions, tracks, "fBin", 5, -1);
     for (auto& [col1, tracks1, col2, tracks2] : pair) {
       LOGF(info, "Mixed event collisions: (%d, %d)", col1.index(), col2.index());
       for (auto& [t1, t2] : combinations(CombinationsFullIndexPolicy(tracks1, tracks2))) {
@@ -224,7 +226,7 @@ struct PairSubscribe {
 WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
-    //adaptAnalysisTask<HashTask>(cfgc),
+    adaptAnalysisTask<HashTask>(cfgc),
     //adaptAnalysisTask<MixedEventsTracks>(cfgc),
     //adaptAnalysisTask<MixedEventsPartitionedTracks>(cfgc),
     //adaptAnalysisTask<CombinationsSubscribe>(cfgc),

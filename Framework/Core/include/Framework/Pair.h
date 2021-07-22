@@ -22,6 +22,7 @@ namespace o2::framework
 template <typename G, typename A, typename T1>
 struct Pair {
   using PairIteratorType = std::tuple<typename G::iterator, A, typename G::iterator, A>;
+  using PairIteratorRefType = std::tuple<typename G::iterator&, A&, typename G::iterator&, A&>;
   using GroupingPolicy = o2::soa::CombinationsBlockStrictlyUpperSameIndexPolicy<T1, G, G>;
 
   struct PairIterator : public std::iterator<std::forward_iterator_tag, PairIteratorType>, public GroupingPolicy {
@@ -32,15 +33,30 @@ struct Pair {
     using iterator_category = std::forward_iterator_tag;
 
     PairIterator(const GroupingPolicy& groupingPolicy) : GroupingPolicy(groupingPolicy) {}
-    PairIterator(const GroupingPolicy& groupingPolicy, const G& grouping, const std::shared_ptr<GroupSlicer<G, A>>&& slicer_ptr) : GroupingPolicy(groupingPolicy), mGrouping{std::make_shared<G>(&grouping)}, mSlicer{std::move(slicer_ptr)} {}
+    PairIterator(const GroupingPolicy& groupingPolicy, const G& grouping, const std::shared_ptr<GroupSlicer<G, A>>&& slicer_ptr) : GroupingPolicy(groupingPolicy), mGrouping{std::make_shared<G>(std::vector{grouping.asArrowTable()})}, mSlicer{std::move(slicer_ptr)}
+    {
+      if (!this->mIsEnd) {
+        setCurrentGroupedPair();
+      }
+    }
 
     PairIterator(PairIterator const&) = default;
     PairIterator& operator=(PairIterator const&) = default;
     ~PairIterator() = default;
 
-    std::tuple<A, A> groupAssociated()
+    void setTables(const G& grouping, const std::shared_ptr<GroupSlicer<G, A>>&& slicer_ptr)
     {
-      auto [g1, g2] = GroupingPolicy::mCurrent;
+      mGrouping = std::make_shared<G>(std::vector{grouping.asArrowTable()});
+      mSlicer.reset(slicer_ptr.get());
+      GroupingPolicy::setTables(grouping, grouping);
+      if (!this->mIsEnd) {
+        setCurrentGroupedPair();
+      }
+    }
+
+    void setCurrentGroupedPair()
+    {
+      auto& [g1, g2] = GroupingPolicy::mCurrent;
       auto it1 = mSlicer->begin();
       auto it2 = mSlicer->begin();
       for (auto& slice : *mSlicer) {
@@ -55,23 +71,21 @@ struct Pair {
           break;
         }
       }
-      auto associated1 = std::get<A>(it1.associatedTables());
-      associated1.bindExternalIndices(mGrouping.get());
-      auto associated2 = std::get<A>(it2.associatedTables());
-      associated2.bindExternalIndices(mGrouping.get());
-      return std::tuple(associated1, associated2);
-    }
+      auto a1 = std::get<A>(it1.associatedTables());
+      a1.bindExternalIndices(mGrouping.get());
+      auto a2 = std::get<A>(it2.associatedTables());
+      a2.bindExternalIndices(mGrouping.get());
 
-    std::tuple<typename G::iterator, A, typename G::iterator, A> getCurrentGroupedPair() const
-    {
-      auto [a1, a2] = groupAssociated();
-      auto [g1, g2] = GroupingPolicy::mCurrent;
-      return std::make_tuple<typename G::iterator, A, typename G::iterator, A>(std::move(g1), std::move(a1), std::move(g2), std::move(a2));
+      mCurrentGroupedPair.emplace(g1, a1, g2, a2);
+
+      //mCurrentGroupedPair = PairIteratorRefType(g1, {a1.asArrowTable()}, g2, {a2.asArrowTable()});
+      //mCurrentGroupedPair = PairIteratorType(g1, a1.begin(), g2, a2.begin());
     }
 
     void moveToEnd()
     {
       GroupingPolicy::moveToEnd();
+      setCurrentGroupedPair();
     }
 
     // prefix increment
@@ -80,7 +94,8 @@ struct Pair {
       if (!this->mIsEnd) {
         this->addOne();
       }
-      return getCurrentGroupedPair();
+      setCurrentGroupedPair();
+      return *this;
     }
     // postfix increment
     PairIterator operator++(int /*unused*/)
@@ -92,12 +107,11 @@ struct Pair {
     // return reference
     reference operator*()
     {
-      return *this;
-      //return getCurrentGroupedPair();
+      return *mCurrentGroupedPair;
     }
     bool operator==(const PairIterator& rh)
     {
-      return (this->mIsEnd && rh.mIsEnd) || (this->getCurrentGroupedPair() == rh.getCurrentGroupedPair());
+      return (this->mIsEnd && rh.mIsEnd) || (this->mCurrent == rh.mCurrent);
     }
     bool operator!=(const PairIterator& rh)
     {
@@ -107,7 +121,7 @@ struct Pair {
    private:
     std::shared_ptr<GroupSlicer<G, A>> mSlicer = nullptr;
     std::shared_ptr<G> mGrouping = nullptr;
-    std::tuple<typename G::iterator, A, typename G::iterator, A> mCurrentGroupedPair;
+    std::optional<PairIteratorType> mCurrentGroupedPair;
   };
 
   using iterator = PairIterator;
@@ -130,21 +144,23 @@ struct Pair {
     return iterator(mEnd);
   }
 
-  Pair(const char* category, int catNeighbours, const T1& outsider) : mBegin(GroupingPolicy(mCategory, mCatNeighbours, mOutsider)), mEnd(GroupingPolicy(mCategory, mCatNeighbours, mOutsider)), mCategory(category), mCatNeighbours(catNeighbours), mOutsider(outsider) {}
-  Pair(G& grouping, const std::shared_ptr<GroupSlicer<G, A>>&& slicer_ptr, const char* category, int catNeighbours, const T1& outsider) :
-        mCategory(category), mCatNeighbours(catNeighbours), mOutsider(outsider),
-        mBegin(GroupingPolicy(mCategory, mCatNeighbours, mOutsider, grouping, grouping), grouping, std::move(slicer_ptr)),
-        mEnd(GroupingPolicy(mCategory, mCatNeighbours, mOutsider, grouping, grouping), grouping, std::move(slicer_ptr)) {}
+  Pair(const char* category, int catNeighbours, const T1& outsider) : mBegin(GroupingPolicy(category, catNeighbours, outsider)), mEnd(GroupingPolicy(category, catNeighbours, outsider)), mCategory(category), mCatNeighbours(catNeighbours), mOutsider(outsider) {}
+  Pair(G& grouping, const std::shared_ptr<GroupSlicer<G, A>>&& slicer_ptr, const char* category, int catNeighbours, const T1& outsider) : mCategory(category), mCatNeighbours(catNeighbours), mOutsider(outsider), mBegin(GroupingPolicy(mCategory, mCatNeighbours, mOutsider, grouping, grouping), grouping, std::move(slicer_ptr)), mEnd(GroupingPolicy(mCategory, mCatNeighbours, mOutsider, grouping, grouping), grouping, std::move(slicer_ptr))
+  {
+    mEnd.moveToEnd();
+  }
   ~Pair() = default;
 
   void setTables(G& grouping, const A& associated)
   {
-    //grouping.bindExternalIndices(&associated);
-    //auto associatedTuple = std::make_tuple(associated);
-    //std::shared_ptr slicer_ptr = std::make_shared<GroupSlicer<G, A>>(grouping, associatedTuple);
+    grouping.bindExternalIndices(&associated);
+    auto associatedTuple = std::make_tuple(associated);
+    std::shared_ptr slicer_ptr = std::make_shared<GroupSlicer<G, A>>(grouping, associatedTuple);
+    mBegin.setTables(grouping, std::move(slicer_ptr));
+    mEnd.setTables(grouping, std::move(slicer_ptr));
     //mBegin = iterator(GroupingPolicy(mCategory, mCatNeighbours, mOutsider, grouping, grouping), grouping, std::move(slicer_ptr));
     //mEnd = iterator(GroupingPolicy(mCategory, mCatNeighbours, mOutsider, grouping, grouping), grouping, std::move(slicer_ptr));
-    //mEnd.moveToEnd();
+    mEnd.moveToEnd();
   }
 
  private:
