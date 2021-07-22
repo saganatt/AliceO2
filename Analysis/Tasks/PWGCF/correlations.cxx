@@ -104,6 +104,10 @@ struct CorrelationTask {
 
   Service<o2::ccdb::BasicCCDBManager> ccdb;
 
+  // Strictly upper categorised collisions, for cfgNoMixedEvents combinations per bin, skipping those in entry -1
+  using myCollisions = soa::Join<aod::Collisions, aod::Hashes, aod::EvSels, aod::Cents>;
+  Pair<myCollisions, myTracks, int> mixedEventsPair{"fBin", cfgNoMixedEvents, -1};
+
   void init(o2::framework::InitContext&)
   {
     registry.add("yields", "centrality vs pT vs eta", {HistType::kTH3F, {{100, 0, 100, "centrality"}, {40, 0, 20, "p_{T}"}, {100, -2, 2, "#eta"}}});
@@ -289,19 +293,13 @@ struct CorrelationTask {
     fillCorrelations(same, tracks, tracks, centrality, collision.posZ(), bSign);
   }
 
-  void processMixed(soa::Join<aod::Collisions, aod::Hashes, aod::EvSels, aod::Cents>& collisions, myTracks const& tracks)
+  void processMixed(myCollisions& collisions, myTracks const& tracks)
   {
     // TODO loading of efficiency histogram missing here, because it will happen somehow in the CCDBConfigurable
 
     int bSign = 1; // TODO magnetic field from CCDB
 
-    collisions.bindExternalIndices(&tracks);
-    auto tracksTuple = std::make_tuple(tracks);
-    GroupSlicer slicer(collisions, tracksTuple);
-
-    // Strictly upper categorised collisions, for cfgNoMixedEvents combinations per bin, skipping those in entry -1
-    for (auto& [collision1, collision2] : selfCombinations("fBin", cfgNoMixedEvents, -1, collisions, collisions)) {
-
+    for (auto& [collision1, tracks1, collision2, tracks2] : mixedEventsPair) {
       LOGF(info, "Mixed collisions bin: %d pair: %d (%f), %d (%f)", collision1.bin(), collision1.index(), collision1.posZ(), collision2.index(), collision2.posZ());
 
       // TODO in principle these should be already checked on hash level, because in this way we don't check collision 2
@@ -309,27 +307,7 @@ struct CorrelationTask {
         continue;
       }
 
-      auto it1 = slicer.begin();
-      auto it2 = slicer.begin();
-      for (auto& slice : slicer) {
-        if (slice.groupingElement().index() == collision1.index()) {
-          it1 = slice;
-          break;
-        }
-      }
-      for (auto& slice : slicer) {
-        if (slice.groupingElement().index() == collision2.index()) {
-          it2 = slice;
-          break;
-        }
-      }
-
-      auto tracks1 = std::get<myTracks>(it1.associatedTables());
-      tracks1.bindExternalIndices(&collisions);
-      auto tracks2 = std::get<myTracks>(it2.associatedTables());
-      tracks2.bindExternalIndices(&collisions);
-
-      // LOGF(info, "Tracks: %d and %d entries", tracks1.size(), tracks2.size());
+      LOGF(info, "Tracks: %d and %d entries", tracks1.size(), tracks2.size());
 
       fillCorrelations(mixed, tracks1, tracks2, collision1.centV0M(), collision1.posZ(), bSign);
     }

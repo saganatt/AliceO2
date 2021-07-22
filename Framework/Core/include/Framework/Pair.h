@@ -54,38 +54,9 @@ struct Pair {
       }
     }
 
-    void setCurrentGroupedPair()
-    {
-      auto& [g1, g2] = GroupingPolicy::mCurrent;
-      auto it1 = mSlicer->begin();
-      auto it2 = mSlicer->begin();
-      for (auto& slice : *mSlicer) {
-        if (slice.groupingElement().index() == g1.index()) {
-          it1 = slice;
-          break;
-        }
-      }
-      for (auto& slice : *mSlicer) {
-        if (slice.groupingElement().index() == g2.index()) {
-          it2 = slice;
-          break;
-        }
-      }
-      auto a1 = std::get<A>(it1.associatedTables());
-      a1.bindExternalIndices(mGrouping.get());
-      auto a2 = std::get<A>(it2.associatedTables());
-      a2.bindExternalIndices(mGrouping.get());
-
-      mCurrentGroupedPair.emplace(g1, a1, g2, a2);
-
-      //mCurrentGroupedPair = PairIteratorRefType(g1, {a1.asArrowTable()}, g2, {a2.asArrowTable()});
-      //mCurrentGroupedPair = PairIteratorType(g1, a1.begin(), g2, a2.begin());
-    }
-
     void moveToEnd()
     {
       GroupingPolicy::moveToEnd();
-      setCurrentGroupedPair();
     }
 
     // prefix increment
@@ -93,8 +64,8 @@ struct Pair {
     {
       if (!this->mIsEnd) {
         this->addOne();
+        setCurrentGroupedPair();
       }
-      setCurrentGroupedPair();
       return *this;
     }
     // postfix increment
@@ -119,6 +90,51 @@ struct Pair {
     }
 
    private:
+    std::tuple<A, A> getAssociatedTables()
+    {
+      auto& [g1, g2] = GroupingPolicy::mCurrent;
+      auto it1 = mSlicer->begin();
+      auto it2 = mSlicer->begin();
+      for (auto& slice : *mSlicer) {
+        if (slice.groupingElement().index() == g1.index()) {
+          it1 = slice;
+          break;
+        }
+      }
+      for (auto& slice : *mSlicer) {
+        if (slice.groupingElement().index() == g2.index()) {
+          it2 = slice;
+          break;
+        }
+      }
+      auto a1 = std::get<A>(it1.associatedTables());
+      auto a2 = std::get<A>(it2.associatedTables());
+      return std::make_tuple(a1, a2);
+    }
+
+    void setCurrentGroupedPair()
+    {
+      auto [b1, b2] = getAssociatedTables();
+      bool moveForward = b1.size() == 0 || b2.size() == 0;
+      while (!this->mIsEnd && moveForward) {
+        GroupingPolicy::addOne();
+        auto [c1, c2] = getAssociatedTables();
+        moveForward = c1.size() == 0 || c2.size() == 0;
+      }
+      auto [a1, a2] = getAssociatedTables();
+
+      if (!this->mIsEnd) {
+        auto& [g1, g2] = GroupingPolicy::mCurrent;
+        a1.bindExternalIndices(mGrouping.get());
+        a2.bindExternalIndices(mGrouping.get());
+
+        mCurrentGroupedPair.emplace(g1, a1, g2, a2);
+
+        //mCurrentGroupedPair = PairIteratorRefType(g1, {a1.asArrowTable()}, g2, {a2.asArrowTable()});
+        //mCurrentGroupedPair = PairIteratorType(g1, a1.begin(), g2, a2.begin());
+      }
+    }
+
     std::shared_ptr<GroupSlicer<G, A>> mSlicer = nullptr;
     std::shared_ptr<G> mGrouping = nullptr;
     std::optional<PairIteratorType> mCurrentGroupedPair;

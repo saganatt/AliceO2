@@ -34,8 +34,9 @@ using namespace o2::framework::expressions;
 using namespace o2::soa;
 
 struct HashTask {
-  std::vector<float> xBins{-0.060f, -0.620f, -0.064f, 0.066f, 0.068f, 0.070f, 0.072f};
-  std::vector<float> yBins{-0.300f, -0.301f, -0.320f, 0.330f, 0.340f, 0.350f, 0.360f};
+  // NOTE: The bins need to be ordered for the hash calculations to make sense
+  std::vector<float> xBins{0.060f, 0.064f, 0.068f, 0.072f, 0.076f, 0.080f, 0.084f};
+  std::vector<float> yBins{0.300f, 0.310f, 0.320f, 0.330f, 0.340f, 0.350f, 0.360f, 0.370f, 0.380f};
   Produces<aod::Hashes> hashes;
 
   // Calculate hash for an element based on 2 properties and their bins.
