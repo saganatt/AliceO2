@@ -1365,6 +1365,11 @@ class Table
  protected:
   /// Offset of the table within a larger table.
   uint64_t mOffset;
+  std::shared_ptr<arrow::Table> mTable;
+  // Cached pointers to the ChunkedArray associated to a column
+  arrow::ChunkedArray* mColumnChunks[sizeof...(C)];
+  /// Cached end iterator for this table.
+  RowViewSentinel mEnd;
 
  private:
   template <typename T>
@@ -1377,13 +1382,8 @@ class Table
       return nullptr;
     }
   }
-  std::shared_ptr<arrow::Table> mTable;
-  // Cached pointers to the ChunkedArray associated to a column
-  arrow::ChunkedArray* mColumnChunks[sizeof...(C)];
   /// Cached begin iterator for this table.
   unfiltered_iterator mBegin;
-  /// Cached end iterator for this table.
-  RowViewSentinel mEnd;
   std::string mCurrentKey;
   std::shared_ptr<arrow::NumericArray<arrow::Int32Type>> mValues = nullptr;
   std::shared_ptr<arrow::NumericArray<arrow::Int64Type>> mCounts = nullptr;
@@ -1414,6 +1414,218 @@ class Table
     output = mTable->Slice(offset, 0);
     return arrow::Status::OK();
   }
+};
+
+template <typename... C>
+class RuntimeSelectionTable : public Table<C...>
+{
+ public:
+  using table_t = Table<C...>;
+  using columns = typename Table<C...>::columns;
+  using column_types = typename Table<C...>::column_types;
+  using persistent_columns_t = typename Table<C...>::persistent_columns_t;
+  using external_index_columns_t = typename Table<C...>::external_index_columns_t;
+
+  template <typename IP, typename Parent, typename... T>
+  struct RowViewByLabels : public RowViewCore<IP, C...> {
+    using external_index_columns_t = framework::selected_pack<is_external_index_t, C...>;
+    using bindings_pack_t = decltype(extractBindings(external_index_columns_t{}));
+    using parent_t = Parent;
+    using originals = originals_pack_t<T...>;
+
+    RowViewByLabels(arrow::ChunkedArray* columnData[sizeof...(C)], IP&& policy, std::vector<arrow::ChunkedArray*>& selectedColumnChunks)
+      : RowViewCore<IP, C...>(columnData, std::forward<decltype(policy)>(policy))
+    {
+      mSelectedColumnChunks = selectedColumnChunks;
+    }
+
+    template <typename Tbl = table_t>
+    RowViewByLabels(RowViewByLabels<IP, Tbl, Tbl> const& other)
+      : RowViewCore<IP, C...>(other)
+    {
+      mSelectedColumnChunks = other.selectedColumnChunks;
+    }
+
+    template <typename Tbl = table_t>
+    RowViewByLabels(RowViewByLabels<IP, Tbl, Tbl>&& other) noexcept
+      : RowViewCore<IP, C...>(other)
+    {
+      mSelectedColumnChunks = other.selectedColumnChunks;
+    }
+
+    RowViewByLabels() = default;
+    RowViewByLabels(RowViewByLabels const&) = default;
+    RowViewByLabels(RowViewByLabels&&) = default;
+
+    RowViewByLabels& operator=(RowViewByLabels const&) = default;
+    RowViewByLabels& operator=(RowViewByLabels&&) = default;
+
+    RowViewByLabels& operator=(RowViewSentinel const& other)
+    {
+      this->mRowIndex = other.index;
+      return *this;
+    }
+
+    void matchTo(RowViewByLabels const& other)
+    {
+      this->mRowIndex = other.mRowIndex;
+      this->mSelectedColumnChunks = other.mSelectedColumnChunks;
+    }
+
+    template <typename TI>
+    auto getId() const
+    {
+      using decayed = std::decay_t<TI>;
+      if constexpr (framework::has_type_v<decayed, bindings_pack_t>) {
+        constexpr auto idx = framework::has_type_at_v<decayed>(bindings_pack_t{});
+        return framework::pack_element_t<idx, external_index_columns_t>::getId();
+      } else if constexpr (std::is_same_v<decayed, Parent>) {
+        return this->globalIndex();
+      } else {
+        return static_cast<int32_t>(-1);
+      }
+    }
+
+    using IP::size;
+
+    using RowViewCore<IP, C...>::operator++;
+
+    /// Allow incrementing by more than one the iterator
+    RowViewByLabels operator+(int64_t inc) const
+    {
+      RowViewByLabels copy = *this;
+      copy.moveByIndex(inc);
+      return copy;
+    }
+
+    RowViewByLabels operator-(int64_t dec) const
+    {
+      return operator+(-dec);
+    }
+
+    RowViewByLabels const& operator*() const
+    {
+      return *this;
+    }
+
+    std::vector<arrow::ChunkedArray*> mSelectedColumnChunks;
+  };
+  template <typename P, typename... Ts>
+  using RowView = RowViewByLabels<DefaultIndexPolicy, P, Ts...>;
+
+  template <typename P, typename... Ts>
+  using RowViewFiltered = RowViewByLabels<FilteredIndexPolicy, P, Ts...>;
+
+  using iterator = RowView<table_t, table_t>;
+  using const_iterator = RowView<table_t, table_t>;
+  using unfiltered_iterator = RowView<table_t, table_t>;
+  using unfiltered_const_iterator = RowView<table_t, table_t>;
+  using filtered_iterator = RowViewFiltered<table_t, table_t>;
+  using filtered_const_iterator = RowViewFiltered<table_t, table_t>;
+
+  RuntimeSelectionTable(Table<C...> const& table, std::vector<std::string>&& columnLabels)
+    : Table<C...>(table), mColumnLabels(columnLabels)
+  {
+    initSelectedColumns();
+  }
+  RuntimeSelectionTable(std::shared_ptr<arrow::Table> table, std::vector<std::string>&& columnLabels, uint64_t offset = 0)
+    : Table<C...>(table, offset), mColumnLabels(columnLabels)
+  {
+    initSelectedColumns();
+  }
+
+  /// FIXME: this is to be able to construct a Filtered without explicit Join
+  ///        so that Filtered<Table1,Table2, ...> always means a Join which
+  ///        may or may not be a problem later
+  RuntimeSelectionTable(std::vector<std::shared_ptr<arrow::Table>>&& tables, std::vector<std::string>&& columnLabels, uint64_t offset = 0)
+    : RuntimeSelectionTable(ArrowHelpers::joinTables(std::move(tables)), columnLabels, offset)
+  {
+  }
+
+  unfiltered_iterator begin()
+  {
+    return unfiltered_iterator(mBegin);
+  }
+
+  RowViewSentinel end()
+  {
+    return RowViewSentinel{this->mEnd};
+  }
+
+  filtered_iterator filtered_begin(gsl::span<int64_t const> selection)
+  {
+    // Note that the FilteredIndexPolicy will never outlive the selection which
+    // is held by the table, so we are safe passing the bare pointer. If it does it
+    // means that the iterator on a table is outliving the table itself, which is
+    // a bad idea.
+    return filtered_iterator{this->mColumnChunks, {selection, this->mOffset}, mSelectedColumnChunks};
+  }
+
+  iterator iteratorAt(uint64_t i) const
+  {
+    return rawIteratorAt(i);
+  }
+
+  unfiltered_iterator rawIteratorAt(uint64_t i) const
+  {
+    auto it = mBegin + i;
+    it.bindInternalIndices((void*)this);
+    return it;
+  }
+
+  unfiltered_const_iterator begin() const
+  {
+    return unfiltered_const_iterator(mBegin);
+  }
+
+  using Table<C...>::end;
+  using Table<C...>::asArrowTable;
+  using Table<C...>::offset;
+  using Table<C...>::size;
+  using Table<C...>::tableSize;
+  using Table<C...>::bindExternalIndices;
+  using Table<C...>::bindInternalIndices;
+  using Table<C...>::bindInternalIndicesTo;
+  using Table<C...>::bindExternalIndicesRaw;
+  using Table<C...>::doCopyIndexBindings;
+  using Table<C...>::copyIndexBindings;
+  using Table<C...>::select;
+  using Table<C...>::sliceByCached;
+  using Table<C...>::sliceBy;
+  using Table<C...>::slice;
+  using Table<C...>::rawSlice;
+  using Table<C...>::emptySlice;
+
+ private:
+  void initSelectedColumns()
+  {
+    if (this->mTable->num_rows() == 0) {
+      for (int i = 0; i < mColumnLabels.size(); i++) {
+        mSelectedColumnChunks[i] = nullptr;
+      }
+      mBegin = this->mEnd;
+    } else {
+      mSelectedColumnChunks = getLookupColumnsByLabels(mColumnLabels);
+      mBegin = unfiltered_iterator{this->mColumnChunks, {this->mTable->num_rows(), this->mOffset}, mSelectedColumnChunks};
+      bindInternalIndices();
+    }
+  }
+
+  std::vector<arrow::ChunkedArray*> getLookupColumnsByLabels(std::vector<std::string> const& columnLabels)
+  {
+    // FIXME: It makes a copy, can we avoid it?
+    std::vector<arrow::ChunkedArray*> lookups;
+    for (auto& label : columnLabels) {
+      lookups.push_back(getIndexFromLabel(this->mTable.get(), label.c_str()));
+    }
+    return lookups;
+  }
+
+  /// Cached begin iterator for this table.
+  unfiltered_iterator mBegin;
+  /// Selected columns labels
+  std::vector<std::string> mColumnLabels;
+  std::vector<arrow::ChunkedArray*> mSelectedColumnChunks;
 };
 
 template <typename T>
