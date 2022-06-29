@@ -1,0 +1,25 @@
+var CathodeSegmentationCInterface_8h =
+[
+    [ "MchCathodeSegmentationHandle", "d0/dc7/CathodeSegmentationCInterface_8h.html#a9343632dcfb5c8adf677a3f62d27c186", null ],
+    [ "MchDetectionElementHandler", "d0/dc7/CathodeSegmentationCInterface_8h.html#af1357ea456fc3aa5252225b264d58a66", null ],
+    [ "MchDualSampaHandler", "d0/dc7/CathodeSegmentationCInterface_8h.html#aea061fe0248d07588fa00b0c239a6224", null ],
+    [ "MchPadHandler", "d0/dc7/CathodeSegmentationCInterface_8h.html#a2a0006edfae417dffa9cb065585376c1", null ],
+    [ "mchCathodeSegmentationConstruct", "d0/dc7/CathodeSegmentationCInterface_8h.html#aec786fc639377cde4be967f9d2d495de", null ],
+    [ "mchCathodeSegmentationDestruct", "d0/dc7/CathodeSegmentationCInterface_8h.html#ace0100008202be5d518a2e3ee56021ef", null ],
+    [ "mchCathodeSegmentationFindPadByFEE", "d0/dc7/CathodeSegmentationCInterface_8h.html#a5230721e86fcb69e80c6bd4e974dc31f", null ],
+    [ "mchCathodeSegmentationFindPadByPosition", "d0/dc7/CathodeSegmentationCInterface_8h.html#ad612f392673769cbb689cc2d1e1688b4", null ],
+    [ "mchCathodeSegmentationForEachDetectionElement", "d0/dc7/CathodeSegmentationCInterface_8h.html#a97fc1c8bb0180d318ad823a75ced709e", null ],
+    [ "mchCathodeSegmentationForEachDualSampa", "d0/dc7/CathodeSegmentationCInterface_8h.html#ac219b7b70927b3bee30fe2f2385836d6", null ],
+    [ "mchCathodeSegmentationForEachNeighbouringPad", "d0/dc7/CathodeSegmentationCInterface_8h.html#a6aae4ab3327c04bd52459b789daf6401", null ],
+    [ "mchCathodeSegmentationForEachPad", "d0/dc7/CathodeSegmentationCInterface_8h.html#a12c18b42a421576bff6348d1ed33699c", null ],
+    [ "mchCathodeSegmentationForEachPadInArea", "d0/dc7/CathodeSegmentationCInterface_8h.html#a2b2089de572acd32549d777fe47b5112", null ],
+    [ "mchCathodeSegmentationForEachPadInDualSampa", "d0/dc7/CathodeSegmentationCInterface_8h.html#a10766cc188c3153fa0a7de92518fd473", null ],
+    [ "mchCathodeSegmentationForOneDetectionElementOfEachSegmentationType", "d0/dc7/CathodeSegmentationCInterface_8h.html#ab03e209ccaff6905e078f5baf6e12933", null ],
+    [ "mchCathodeSegmentationIsPadValid", "d0/dc7/CathodeSegmentationCInterface_8h.html#ab3231762ec1404267f83e8b65af13aaf", null ],
+    [ "mchCathodeSegmentationPadDualSampaChannel", "d0/dc7/CathodeSegmentationCInterface_8h.html#a58d38fa8ed566fc3fe3e95d5c88f3e0c", null ],
+    [ "mchCathodeSegmentationPadDualSampaId", "d0/dc7/CathodeSegmentationCInterface_8h.html#a8ac0d2a597169fc86aa4259e04ed3776", null ],
+    [ "mchCathodeSegmentationPadPositionX", "d0/dc7/CathodeSegmentationCInterface_8h.html#a23c0f1945fc54b647c86b725ddcb9dea", null ],
+    [ "mchCathodeSegmentationPadPositionY", "d0/dc7/CathodeSegmentationCInterface_8h.html#a1de319c3d48a436c8e73051c9915e66d", null ],
+    [ "mchCathodeSegmentationPadSizeX", "d0/dc7/CathodeSegmentationCInterface_8h.html#a76125bd162c6f20bca30ad331476bb1a", null ],
+    [ "mchCathodeSegmentationPadSizeY", "d0/dc7/CathodeSegmentationCInterface_8h.html#a0f68f9c08664a8cfdd1a1b09c6c3262c", null ]
+];

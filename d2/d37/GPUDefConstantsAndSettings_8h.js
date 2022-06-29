@@ -1,0 +1,28 @@
+var GPUDefConstantsAndSettings_8h =
+[
+    [ "GPUCA_GLOBAL_TRACKING_MIN_HITS", "d2/d37/GPUDefConstantsAndSettings_8h.html#afe86c529baa49a80cc016981697ceedf", null ],
+    [ "GPUCA_GLOBAL_TRACKING_MIN_ROWS", "d2/d37/GPUDefConstantsAndSettings_8h.html#a369d735c7b861f463ecec6e222e17b8e", null ],
+    [ "GPUCA_GLOBAL_TRACKING_RANGE", "d2/d37/GPUDefConstantsAndSettings_8h.html#a3dcf037e4099030c91e513a854d6da8d", null ],
+    [ "GPUCA_GLOBAL_TRACKING_Y_RANGE_LOWER", "d2/d37/GPUDefConstantsAndSettings_8h.html#a2e00b2c1c00ee4d9a3c1ae1d73460167", null ],
+    [ "GPUCA_GLOBAL_TRACKING_Y_RANGE_UPPER", "d2/d37/GPUDefConstantsAndSettings_8h.html#aebbdfe0ac86a9f7817d19e70d7c26aca", null ],
+    [ "GPUCA_MAX_BIN_SIZE", "d2/d37/GPUDefConstantsAndSettings_8h.html#a02f10ba72b63ee197bfcc60d22fb46df", null ],
+    [ "GPUCA_MAX_SIN_PHI", "d2/d37/GPUDefConstantsAndSettings_8h.html#aedc77e1cb7b30e9a388720ee3493c36c", null ],
+    [ "GPUCA_MAX_SIN_PHI_LOW", "d2/d37/GPUDefConstantsAndSettings_8h.html#aaae686e3a351f7d112899fe6cc41d5aa", null ],
+    [ "GPUCA_MAXN", "d2/d37/GPUDefConstantsAndSettings_8h.html#a178e5cc84778c945fb6b92971f7024d0", null ],
+    [ "GPUCA_MERGER_CE_ROWLIMIT", "d2/d37/GPUDefConstantsAndSettings_8h.html#a4a26fc24657d23dd5b983c85575100c6", null ],
+    [ "GPUCA_MERGER_COV_LIMIT", "d2/d37/GPUDefConstantsAndSettings_8h.html#ae79eeb0535a3cb5991a0564530fe9b67", null ],
+    [ "GPUCA_MERGER_HORIZONTAL_DOUBLE_QPTB5_LIMIT", "d2/d37/GPUDefConstantsAndSettings_8h.html#ae11f81fef247c375c45d1f8bfea9867b", null ],
+    [ "GPUCA_MERGER_LOOPER_QPTB5_LIMIT", "d2/d37/GPUDefConstantsAndSettings_8h.html#a8f4cf4c88db1961d609c6f0eca924bb7", null ],
+    [ "GPUCA_MERGER_MAX_TRACK_CLUSTERS", "d2/d37/GPUDefConstantsAndSettings_8h.html#a8426f73495aa86940416972ef3012985", null ],
+    [ "GPUCA_MERGER_MAXN_MISSED_HARD", "d2/d37/GPUDefConstantsAndSettings_8h.html#a750ba5754152c6d8be0e042f68ecc3dc", null ],
+    [ "GPUCA_MIN_BIN_SIZE", "d2/d37/GPUDefConstantsAndSettings_8h.html#ab127b7c24a7714b664218bde90e5d59e", null ],
+    [ "GPUCA_MIN_TRACK_PTB5_DEFAULT", "d2/d37/GPUDefConstantsAndSettings_8h.html#ae545659be0c95e973ca07f7b47980cd0", null ],
+    [ "GPUCA_MIN_TRACK_PTB5_REJECT", "d2/d37/GPUDefConstantsAndSettings_8h.html#a6072c5dd1603021fc8138854da6f25e8", null ],
+    [ "GPUCA_NSLICES", "d2/d37/GPUDefConstantsAndSettings_8h.html#a081c812eb3d5bc9339ce0b5736a44c93", null ],
+    [ "GPUCA_ROW_COUNT", "d2/d37/GPUDefConstantsAndSettings_8h.html#afd2e13a07f9d227b8949af90d39812cf", null ],
+    [ "GPUCA_TPC_COMP_CHUNK_SIZE", "d2/d37/GPUDefConstantsAndSettings_8h.html#a7057f7d9dccfebd8a2455aa86208b302", null ],
+    [ "GPUCA_TRACKLET_CONSTRUCTOR_MAX_ROW_GAP", "d2/d37/GPUDefConstantsAndSettings_8h.html#ab8bd098fde1698fc5fad65100f9c5089", null ],
+    [ "GPUCA_TRACKLET_CONSTRUCTOR_MAX_ROW_GAP_SEED", "d2/d37/GPUDefConstantsAndSettings_8h.html#a2b720c71622e81e462ad5dc33fdba961", null ],
+    [ "GPUCA_TRACKLET_SELECTOR_MIN_HITS_B5", "d2/d37/GPUDefConstantsAndSettings_8h.html#ac90e54cf02271e7853b27433a7bfc483", null ],
+    [ "GPUCA_Y_FACTOR", "d2/d37/GPUDefConstantsAndSettings_8h.html#a01b734da8968f0fcaf218c22938681a5", null ]
+];

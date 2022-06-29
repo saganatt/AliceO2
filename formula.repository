@@ -1,0 +1,9 @@
+\_form#0:$ \nabla^{2}V(r,\phi,z) = - f(r,\phi,z) $
+\_form#1:$ V(r,\phi,z) $
+\_form#2:$ - f(r,\phi,z) $
+\_form#3:\[ (R u)_{i,j,k} = \frac{1}{2} u_{2i,2j,2k} + \frac{1}{4} S_{1} + \frac{1}{8} S_{2} + \frac{1}{16} S_{3}\]
+\_form#4:$ U_{i,j,k} = (1 + \frac{1}{r_{i}h_{r}}) U_{i+1,j,k} + (1 - \frac{1}{r_{i}h_{r}}) U_{i+1,j,k} $
+\_form#5:$ h_{r}^{2} $
+\_form#6:$ V_{x+1,y,z} $
+\_form#7:$ V_{x-1,y,z} $
+\_form#8:$ 1/ h_{r}^{2} $

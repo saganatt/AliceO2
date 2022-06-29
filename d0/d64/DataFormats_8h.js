@@ -1,0 +1,28 @@
+var DataFormats_8h =
+[
+    [ "BareFormat", "da/db0/structo2_1_1mch_1_1raw_1_1BareFormat.html", null ],
+    [ "UserLogicFormat", "d5/d42/structo2_1_1mch_1_1raw_1_1UserLogicFormat.html", null ],
+    [ "ChargeSumMode", "d5/da5/structo2_1_1mch_1_1raw_1_1ChargeSumMode.html", "d5/da5/structo2_1_1mch_1_1raw_1_1ChargeSumMode" ],
+    [ "SampleMode", "db/d9e/structo2_1_1mch_1_1raw_1_1SampleMode.html", "db/d9e/structo2_1_1mch_1_1raw_1_1SampleMode" ],
+    [ "isUserLogicFormat", "df/d41/structo2_1_1mch_1_1raw_1_1isUserLogicFormat.html", null ],
+    [ "isUserLogicFormat< UserLogicFormat >", "d4/d79/structo2_1_1mch_1_1raw_1_1isUserLogicFormat_3_01UserLogicFormat_01_4.html", null ],
+    [ "isUserLogicFormat< BareFormat >", "dc/dae/structo2_1_1mch_1_1raw_1_1isUserLogicFormat_3_01BareFormat_01_4.html", null ],
+    [ "isChargeSumMode", "dd/d0b/structo2_1_1mch_1_1raw_1_1isChargeSumMode.html", null ],
+    [ "isChargeSumMode< ChargeSumMode >", "d2/d91/structo2_1_1mch_1_1raw_1_1isChargeSumMode_3_01ChargeSumMode_01_4.html", null ],
+    [ "isChargeSumMode< SampleMode >", "d3/d65/structo2_1_1mch_1_1raw_1_1isChargeSumMode_3_01SampleMode_01_4.html", null ],
+    [ "ULHeaderWord", "dd/d59/structo2_1_1mch_1_1raw_1_1ULHeaderWord.html", null ],
+    [ "ULHeaderWord< 0 >", "de/d78/structo2_1_1mch_1_1raw_1_1ULHeaderWord_3_010_01_4.html", "de/d78/structo2_1_1mch_1_1raw_1_1ULHeaderWord_3_010_01_4" ],
+    [ "ULHeaderWord< 1 >", "da/dbc/structo2_1_1mch_1_1raw_1_1ULHeaderWord_3_011_01_4.html", "da/dbc/structo2_1_1mch_1_1raw_1_1ULHeaderWord_3_011_01_4" ],
+    [ "FEEID", "d1/d61/structo2_1_1mch_1_1raw_1_1FEEID.html", "d1/d61/structo2_1_1mch_1_1raw_1_1FEEID" ],
+    [ "DualSampaChannelId", "d0/d64/DataFormats_8h.html#ac157101699fdaa444607efece17e0f7b", null ],
+    [ "SampaChannelAddress", "d0/d64/DataFormats_8h.html#a09d273e3cfd28a56d89823e5e12fcd6b", null ],
+    [ "uint10_t", "d0/d64/DataFormats_8h.html#a4294adce53f77446e33d6b1bd76c9838", null ],
+    [ "uint20_t", "d0/d64/DataFormats_8h.html#ac32d8852ced996d4fcb7efd9259e3521", null ],
+    [ "uint50_t", "d0/d64/DataFormats_8h.html#ad24988107777fd8dac87fa7ac19e938c", null ],
+    [ "uint5_t", "d0/d64/DataFormats_8h.html#ad80316e032dfef26966b57bdfd0a6885", null ],
+    [ "uint6_t", "d0/d64/DataFormats_8h.html#a3edc127dd9bfa2ba81b1773d81e252fc", null ],
+    [ "extraFeeIdChargeSumMask", "d0/d64/DataFormats_8h.html#ac756f9f7b551ce2581ec763ad8eca1dd", null ],
+    [ "extraFeeIdVersionMask", "d0/d64/DataFormats_8h.html#a38c9eac61c8728a58430a2cb4c484de4", null ],
+    [ "linkRemapping", "d0/d64/DataFormats_8h.html#aaa5123d1de2e3fdcd4a197181ac0a7bb", null ],
+    [ "operator<<", "d0/d64/DataFormats_8h.html#ac68f108a1fe42493b3451dc33f66db42", null ]
+];

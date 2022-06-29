@@ -1,0 +1,28 @@
+var classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4 =
+[
+    [ "IDCAverageGroupBase", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a5b816c09be79ec1336b4b96667e050e8", null ],
+    [ "drawGroupedIDCsSector", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a6d7607d5cf8305ca7d0e220613d27e64", null ],
+    [ "drawGroupedIDCsSide", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#ae53e85bae8517e92be4bacef879d3130", null ],
+    [ "drawIDCDeltaHelper", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a15bb7d18be520fa95484af4d853db11e", null ],
+    [ "drawUngroupedIDCsSector", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a08fd7eb33312667f378806382cc53eab", null ],
+    [ "drawUngroupedIDCsSide", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a4f8acf430dd1e53d896a99fe8b79de93", null ],
+    [ "getGroupedIDCDeltaVal", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a42ae22ea0c3634adbd8269ab575857e7", null ],
+    [ "getIDCGroupData", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a39ffb4d350d0f773c96239bbb774a112", null ],
+    [ "getIDCGroupData", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#ac9c3f361e54cc4d96ee8d48ec2d44edc", null ],
+    [ "getIDCGroupHelperSector", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a7cc53c34a9303e53788d3ddf29d32c7e", null ],
+    [ "getIDCUngroupData", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a2dae575f19b848b4a5d7a6546ebaf2ac", null ],
+    [ "getNIntegrationIntervals", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#aaf7d8c7c5709661d43f92124d2948642", null ],
+    [ "getUngroupedIDCDeltaVal", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a760e94239cb7d19f8490c639f8d91e03", null ],
+    [ "getUngroupedIndexGlobal", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a553bd1494a7f3a6ebb134ce3669c5273", null ],
+    [ "resetGroupedIDCs", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a725325a9d7b00a497e63d1f5a64b510a", null ],
+    [ "resizeGroupedIDCs", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a22693ae9e1b0834f00cf2f95829b9ca8", null ],
+    [ "resizeGroupedIDCs", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#ab02c48cfb9d171b9495a6cfae8ab5490", null ],
+    [ "setIDCs", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#abef015f80301a06b45d3d58c4104b757", null ],
+    [ "setIDCs", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#acf32b191d35618d415192c9caf246b04", null ],
+    [ "mIDCGroupHelperSector", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a4297ec013591c3429ca625f45e320670", null ],
+    [ "mIDCsGrouped", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a244189bfe02b0e689d1437a72e604182", null ],
+    [ "mIDCsUngrouped", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a586f6bd1db6ae82cc8854c8568b0e778", null ],
+    [ "mRobustAverage", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#a1c497b09257622e71663bfc36bb083e7", null ],
+    [ "mWeightsPad", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#af929184bb4540dd8ca6534ddd8858a82", null ],
+    [ "mWeightsRow", "d2/d6e/classo2_1_1tpc_1_1IDCAverageGroupBase_3_01IDCAverageGroupTPC_01_4.html#ac090776085a536f774f211db93ba7ecb", null ]
+];

@@ -1,0 +1,26 @@
+var structo2_1_1framework_1_1DataProcessingStats =
+[
+    [ "InputLatency", "d3/d9f/structo2_1_1framework_1_1DataProcessingStats_1_1InputLatency.html", "d3/d9f/structo2_1_1framework_1_1DataProcessingStats_1_1InputLatency" ],
+    [ "availableManagedShm", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a4fb60628f7e254e519cebb2a7924c8be", null ],
+    [ "beginIterationTimestamp", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#acf58497736f0365e3169b4ac8e6027f5", null ],
+    [ "consumedTimeframes", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#aa0f7d3a51778f0e07cfb1acfd5139c57", null ],
+    [ "errorCount", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#ade7462c4cf8e45a35f327db09ffd6441", null ],
+    [ "exceptionCount", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#aa757fd3a75b758120fee090c2754dce5", null ],
+    [ "incomplete", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a9396ae64f65ead444e4dc6ce3fc33ccf", null ],
+    [ "inputParts", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a0d0c046b666525e7c27a2f78871e738e", null ],
+    [ "lastElapsedTimeMs", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#ab4414bbc74deecfcccb60a3843578fce", null ],
+    [ "lastLatency", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a23342b30f0a85762b4a9cae6b7c38d3a", null ],
+    [ "lastMetricFlushedTimestamp", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#af4cddb17ee1872650004fa9db0ad193c", null ],
+    [ "lastProcessedSize", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#afedda5489f3d659130415f378b2b3a18", null ],
+    [ "lastReportedPerformedComputations", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#ab8fee3e870f8999eb6dcfc88ec527b4b", null ],
+    [ "lastSlowMetricSentTimestamp", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#ad2a934ecfbccb43c78141503a4a09826", null ],
+    [ "lastVerySlowMetricSentTimestamp", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a887ee9e324d3dff04dd45e526a18d508", null ],
+    [ "pendingInputs", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a0574d08fdf86a60538ff29259f5803fa", null ],
+    [ "performedComputations", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a74058271f4fdb19c4a8f6f9371bcd8f8", null ],
+    [ "relayerState", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a79cb067c142c0cf63d9ee8c7c0196fa4", null ],
+    [ "statesSize", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a35e26f8368baeb08e87f3c269cae38f9", null ],
+    [ "totalBytesIn", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#ae0d4528372875bc8b00c90c286783424", null ],
+    [ "totalBytesOut", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#afdcadb499820aac5a4c56354ef378b65", null ],
+    [ "totalProcessedSize", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a0ef427e3e6a11167dc8eddd05baf399a", null ],
+    [ "totalSigusr1", "d3/dbc/structo2_1_1framework_1_1DataProcessingStats.html#a16206f2b16b1d43a4ce62c5ea1e4d266", null ]
+];

@@ -1,0 +1,35 @@
+var classo2_1_1ctf_1_1CTFCoderBase =
+[
+    [ "OpType", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#ada767c0667500017258c6966e28d6ef7", [
+      [ "Encoder", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#ada767c0667500017258c6966e28d6ef7a87d487f6f605eb96e61be67988e41e6d", null ],
+      [ "Decoder", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#ada767c0667500017258c6966e28d6ef7ae6818a215084646ac80a1a07561ecf35", null ]
+    ] ],
+    [ "CTFCoderBase", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a9e269cd1f9637007767f552ac4c994a8", null ],
+    [ "CTFCoderBase", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#adb1e22f5ea377be7df1384adaad51f1c", null ],
+    [ "CTFCoderBase", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a48bc7a78b1801c884de8c0b6995f017c", null ],
+    [ "~CTFCoderBase", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#aefa036cb5d36e2b60e161bbf7c639ec9", null ],
+    [ "assignDictVersion", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#af15869a5914c261fac2fdf8cda46f089", null ],
+    [ "checkDictVersion", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a9efcf507c046ec4fa5e51eaba30525d3", null ],
+    [ "clear", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#af79f947256aff3e6e4e965d407b0a036", null ],
+    [ "createCoder", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a52637de2634f15795cdafdb8173fa98c", null ],
+    [ "createCoders", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#ac814e95ff9d06de4afb3570fe1e05ae8", null ],
+    [ "createCodersFromFile", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#ad5c7b962201292d5091ef03378ea0b9a", null ],
+    [ "finaliseCCDB", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a8797a751e37c3862b68da2aea2dd29c9", null ],
+    [ "finaliseCTFOutput", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#acdd96ef98b505fa3623e7674402e9906", null ],
+    [ "getExtDictHeader", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a7002366a0bbf400e5b261a1082e080ea", null ],
+    [ "getMemMarginFactor", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a6f4355af3705406428d9f20dae2a08e4", null ],
+    [ "getPrefix", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#abd3da0ae95c7636e4a7cb972bba1200c", null ],
+    [ "getVerbosity", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a5cf31bc12eaf5fa41470704df46e4544", null ],
+    [ "init", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a2c37cf1ae0df06f751132709a61fd531", null ],
+    [ "readDictionaryFromFile", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a6062c327f2b994b679e6987798cef3af", null ],
+    [ "setMemMarginFactor", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a5269e762711d84322748e25919fb4ec6", null ],
+    [ "setVerbosity", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a4672139fa5422bd92e85157ae4d957f7", null ],
+    [ "updateTimeDependentParams", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#ab57555e2596dd03eea796a1778107288", null ],
+    [ "mCoders", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a0616e3c886c6d6ebcc36f188ead342ba", null ],
+    [ "mDet", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a95997e9ab2e6e596e530b192bee2bb7b", null ],
+    [ "mExtHeader", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#ab0f45feebc40ca6b3e8fb8d3894062b5", null ],
+    [ "mLoadDictFromCCDB", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#aaa5d6f6d456e69182b634167659863af", null ],
+    [ "mMemMarginFactor", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a78939522a5eb8fb449b0d2fb325a31b5", null ],
+    [ "mOpType", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a44bc4de098a9ed70a9d00e3b9af0d5a2", null ],
+    [ "mVerbosity", "d1/db7/classo2_1_1ctf_1_1CTFCoderBase.html#a71591305446f6d6a30f649e24663d770", null ]
+];

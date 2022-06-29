@@ -1,0 +1,38 @@
+var structo2_1_1globaltracking_1_1MatchTPCITSParams =
+[
+    [ "ValidateMatchByFIT", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#ac8ce1b0a75e5727e49798061ac13cb63", [
+      [ "Disable", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#ac8ce1b0a75e5727e49798061ac13cb63a24969b0b3b2bd7a787496a406a886013", null ],
+      [ "Prefer", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#ac8ce1b0a75e5727e49798061ac13cb63a4bfa2c8d5cdb792ed1ce6599917ea62f", null ],
+      [ "Require", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#ac8ce1b0a75e5727e49798061ac13cb63a760bf27cb294a6d80390ec60f87f4d49", null ]
+    ] ],
+    [ "O2ParamDef", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a6d7e9cd73564b27196e647feeab62510", null ],
+    [ "askMinTPCRow", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a4860fff6ea50ef4aae3bd87e74c7628e", null ],
+    [ "crudeAbsDiffCut", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#aac4627b26395bf7f5a1982989f7b4d3a", null ],
+    [ "crudeNSigma2Cut", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a3c3d2e437871a93674229acc3420401a", null ],
+    [ "cutABTrack2ClChi2", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#ad246d06467539ca192835642779dace2", null ],
+    [ "cutMatchingChi2", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#ac612c5ee8af580f7c062106d9dfa6adf", null ],
+    [ "err2ABExtraY", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#aed25cc639db6779a245290d0086327f3", null ],
+    [ "err2ABExtraZ", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a1a743b07dd952a69e4bbadb928da8a5a", null ],
+    [ "lowestLayerAB", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a97d32c2b39f617df8789dfc958d3fa2d", null ],
+    [ "matCorr", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#aa6c70394997ac7cf1ac8259ebbbca8d1", null ],
+    [ "maxABFinalHyp", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a9bb6079b63fadd377308798f858ac43a", null ],
+    [ "maxABLinksOnLayer", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a52ceb9e854ba463cc7a6ac34ba6a77ea", null ],
+    [ "maxMatchCandidates", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a7919603ecb675f60aae714998bc17dd3", null ],
+    [ "maxVDriftUncertainty", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a5e6cab6ee7ec9836b9915f4e53cd9e61", null ],
+    [ "minContributingLayersAB", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#aa862cf2819f8e2c10e5bb9986befdc34", null ],
+    [ "minITSTrackR", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#ae99fb2fb8bdf3144ea61e34076bcad9d", null ],
+    [ "minTPCClusters", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a9190e83c788777d65c4b7f068be61053", null ],
+    [ "minTPCTrackR", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a7a53284792328febfa00ff3b541a7773", null ],
+    [ "nABSigmaY", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#ad81d3ccda49493752671c0e051e230e8", null ],
+    [ "nABSigmaZ", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a0a68c7b6830bdab3abc23b9a7cb1e9d1", null ],
+    [ "requireToReachLayerAB", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a6e26a02e2eecf4ec05f3bed9dcedfdbc", null ],
+    [ "runAfterBurner", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a01ce223faab69f19b3e98d2bd9772834", null ],
+    [ "safeMarginTimeCorrErr", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#ace4311e13337841f584f32b5a6da2586", null ],
+    [ "safeMarginTPCITSTimeBin", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a8d146abd2cbc5fab78b929a61bd9cbde", null ],
+    [ "safeMarginTPCTimeEdge", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#af4c719c110cba1678c0718bee17b2103", null ],
+    [ "tfEdgeTimeToleranceMUS", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a416353044b01cc35ac31b9d80e0d2245", null ],
+    [ "tpcExtConstrainedNSigma", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a9855efb41766981707aceed931c1b77f", null ],
+    [ "tpcTimeICMatchingNSigma", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a21b1b664486ebad8ec2aece9e9a5ab1b", null ],
+    [ "validateMatchByFIT", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#a9701d655f7c0094852066b5919b956dc", null ],
+    [ "verbosity", "d8/d6e/structo2_1_1globaltracking_1_1MatchTPCITSParams.html#ae652c2f931a1ee94f887b1fd5212154d", null ]
+];

@@ -1,0 +1,28 @@
+var structo2_1_1its_1_1TrackingParameters =
+[
+    [ "CellMinimumLevel", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a538e009551ef77d32d7ea8a8220e84c8", null ],
+    [ "CellsPerRoad", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a8198f203cce347f3db3c678b5032680c", null ],
+    [ "operator=", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a4d043328f2c5a8b8bdc23cc812f9c7ff", null ],
+    [ "TrackletsPerRoad", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a00223b9f32515553771d611ce7d88780", null ],
+    [ "CellDeltaTanLambdaSigma", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a406fd68982a523d4a0c1d8fa3f3c0608", null ],
+    [ "ClusterSharing", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#aa62ab99924acc5907e58fd7109a740b4", null ],
+    [ "CorrType", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#ab45a1618e02a44d86192c3fe10811c7b", null ],
+    [ "DeltaROF", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a6c2cd503714865dee544e3bcc17a6314", null ],
+    [ "Diamond", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a232b6d3d23206b009e44189b93835128", null ],
+    [ "FitIterationMaxChi2", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#af830b6428175ac3fce31412a427a08d9", null ],
+    [ "LayerMisalignment", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a50259650259fb733edc5fbdf7712c6c4", null ],
+    [ "LayerRadii", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a10853a1c4af2175ecb89c18d3e85b1b1", null ],
+    [ "LayerResolution", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a6c62504df4ee057d1e6cd84511e3578a", null ],
+    [ "LayerxX0", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a77c2ce896c6fa14527e17b02aad30463", null ],
+    [ "LayerZ", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a24ab187974cd78e0fea893cfbb7a8fd4", null ],
+    [ "MaxMemory", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a20d53e66efebd8f86945be7ff5285d27", null ],
+    [ "MinTrackLength", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a13a5bcef398b5d75baa7472594e0c60b", null ],
+    [ "NLayers", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a5c8e3aaf2f578db9f327fb2765792129", null ],
+    [ "NSigmaCut", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#aadd17c291e8b5a2392595a973d7cbbd4", null ],
+    [ "PhiBins", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#ab6cb085a4b68bb776a7f6712dc8feafe", null ],
+    [ "PVres", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a458a27abe277fc34cba33400396b9edc", null ],
+    [ "TrackletMinPt", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a62a1fcd863a6e8e206b2f330ebd0ba22", null ],
+    [ "UseDiamond", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#afd65978a75841e638596a1e09bbbb6fe", null ],
+    [ "UseTrackFollower", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#ae35a3b58afe87da1fcc9e5fe4f8a5204", null ],
+    [ "ZBins", "d2/db0/structo2_1_1its_1_1TrackingParameters.html#a6a97967b1d4afa54a589b8b72b7b7c09", null ]
+];

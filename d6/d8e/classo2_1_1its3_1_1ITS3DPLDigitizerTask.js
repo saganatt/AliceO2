@@ -1,0 +1,25 @@
+var classo2_1_1its3_1_1ITS3DPLDigitizerTask =
+[
+    [ "ITS3DPLDigitizerTask", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#ab0b0622f318105364733a8f30dc8c4aa", null ],
+    [ "init", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#a787d96aeeb3aeb02a73686b3590f0d12", null ],
+    [ "initDigitizerTask", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#ae61e268c41aabc23584002d9e32e8620", null ],
+    [ "run", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#a5219b489e128da9be47bce0c1f3d482b", null ],
+    [ "setDigitizationOptions", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#a9a533d6b1736583c2834de647b05fbd1", null ],
+    [ "mDigitizer", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#ab2e05999839c9973a6172b7df920bcc1", null ],
+    [ "mDigits", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#a073b0fdd348b4f05e8f2505bac463cd2", null ],
+    [ "mDisableQED", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#a8b636678fca6cc53dd581b9f39994477", null ],
+    [ "mFinished", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#ad0d5b95309fbf3012b34136814722207", null ],
+    [ "mFixMC2ROF", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#a07d18ac1821533b5248f7354094603a1", null ],
+    [ "mHits", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#af1e58a95ee86430ba51a1943114eb37e", null ],
+    [ "mHitsP", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#aab68b1079588b57b27b3f4c1c94ed4ab", null ],
+    [ "mID", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#a83a29cb5fc4fec187f3a4e312fad255f", null ],
+    [ "mLabels", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#a42c48339b510178b41f5d31661657572", null ],
+    [ "mLabelsAccum", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#a558a0eea92061f4e41e39aa8d9640550", null ],
+    [ "mMC2ROFRecordsAccum", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#aae6c7f7754097a1014991e021b081ae7", null ],
+    [ "mOrigin", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#ad77bef5aa22646f66b055bb85e01a2a0", null ],
+    [ "mROFRecords", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#ace45f8bca9f8adab08f11e210ccbde36", null ],
+    [ "mROFRecordsAccum", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#ae0ff78ee6790f5ce083e50206b93987f", null ],
+    [ "mROMode", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#a58ec2d915744c0d05b082ee7abc89ecf", null ],
+    [ "mSimChains", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#aad911dc7437ea593bb61a2f5ab68d1c6", null ],
+    [ "mWithMCTruth", "d6/d8e/classo2_1_1its3_1_1ITS3DPLDigitizerTask.html#aaea75ab276cbd2582c40a43130b1baab", null ]
+];
