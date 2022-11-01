@@ -166,7 +166,7 @@ class DCAFitterN
   int getNIterations(int cand = 0) const { return mNIters[mOrder[cand]]; }
   void setPropagateToPCA(bool v = true) { mPropagateToPCA = v; }
   void setMaxIter(int n = 20) { mMaxIter = n > 2 ? n : 2; }
-  void setMaxR(float r = 200.) { mMaxR2 = r * r; }
+  void setMaxR(float r = 200.) { LOGF(info, "Setting maxR in fitter: %.2f^2 = %.2f, N: %d", r, r*r, N); mMaxR2 = r * r; }
   void setMaxDZIni(float d = 4.) { mMaxDZIni = d; }
   void setMaxDXYIni(float d = 4.) { mMaxDXYIni = d > 0 ? d : 1e9; }
   void setMaxChi2(float chi2 = 999.) { mMaxChi2 = chi2; }
@@ -361,7 +361,10 @@ int DCAFitterN<N, Args...>::process(const Tr&... args)
   for (int ic = 0; ic < mCrossings.nDCA; ic++) {
     // check if radius is acceptable
     if (mCrossings.xDCA[ic] * mCrossings.xDCA[ic] + mCrossings.yDCA[ic] * mCrossings.yDCA[ic] > mMaxR2) {
+      LOGF(info, "Crossing %d radius bigger than max %.3f, rejecting the crossing, mCurHyp %d", ic, mMaxR2, mCurHyp);
       continue;
+    } else {
+      LOGF(info, "Crossing %d radius OK, mCurHyp", ic, mCurHyp);
     }
     mCrossIDCur = ic;
     mCrossIDAlt = (mCrossings.nDCA == 2 && mAllowAltPreference) ? 1 - ic : -1; // works for max 2 crossings
@@ -374,11 +377,15 @@ int DCAFitterN<N, Args...>::process(const Tr&... args)
     if (mUseAbsDCA ? minimizeChi2NoErr() : minimizeChi2()) {
       mOrder[mCurHyp] = mCurHyp;
       if (mPropagateToPCA && !propagateTracksToVertex(mCurHyp)) {
+        LOGF(info, "Failed to propagate, crossing %d, mCurHyp %d", ic, mCurHyp);
         continue; // discard candidate if failed to propagate to it
       }
       mCurHyp++;
+      LOGF(info, "Propagated crossing %d, increased mCurHyp: %d", ic, mCurHyp); 
     }
   }
+
+  LOGF(info, "mCurHyp after the loop %d", mCurHyp);
 
   for (int i = mCurHyp; i--;) { // order in quality
     for (int j = i; j--;) {
@@ -393,6 +400,7 @@ int DCAFitterN<N, Args...>::process(const Tr&... args)
     }
   }
 
+  LOGF(info, "Final mCurHyp %d", mCurHyp);
   return mCurHyp;
 }
 
