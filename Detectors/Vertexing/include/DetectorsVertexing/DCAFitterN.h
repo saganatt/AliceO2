@@ -351,20 +351,23 @@ int DCAFitterN<N, Args...>::process(const Tr&... args)
   if (mCrossings.nDCA == MAXHYP) { // if there are 2 candidates and they are too close, chose their mean as a starting point
     auto dst2 = (mCrossings.xDCA[0] - mCrossings.xDCA[1]) * (mCrossings.xDCA[0] - mCrossings.xDCA[1]) +
                 (mCrossings.yDCA[0] - mCrossings.yDCA[1]) * (mCrossings.yDCA[0] - mCrossings.yDCA[1]);
+    LOGF(info, "2 crossing candidates for tracks x: (%.3f, %.3f),  y: (%.3f, %.3f), dist2: %.3f", mCrossings.xDCA[0], mCrossings.xDCA[1], mCrossings.yDCA[0], mCrossings.yDCA[1], dst2);
     if (dst2 < mMaxDist2ToMergeSeeds) {
       mCrossings.nDCA = 1;
       mCrossings.xDCA[0] = 0.5 * (mCrossings.xDCA[0] + mCrossings.xDCA[1]);
       mCrossings.yDCA[0] = 0.5 * (mCrossings.yDCA[0] + mCrossings.yDCA[1]);
+      LOGF(info, "2 candidates %.3f closer than %.3f for tracks, choosing mean for start: (%.3f, %.3f)", dst2, mMaxDist2ToMergeSeeds, mCrossings.xDCA[0], mCrossings.yDCA[1]);
     }
   }
   // check all crossings
   for (int ic = 0; ic < mCrossings.nDCA; ic++) {
     // check if radius is acceptable
-    if (mCrossings.xDCA[ic] * mCrossings.xDCA[ic] + mCrossings.yDCA[ic] * mCrossings.yDCA[ic] > mMaxR2) {
-      LOGF(info, "Crossing %d radius bigger than max %.3f, rejecting the crossing, mCurHyp %d", ic, mMaxR2, mCurHyp);
+    auto rad = mCrossings.xDCA[ic] * mCrossings.xDCA[ic] + mCrossings.yDCA[ic] * mCrossings.yDCA[ic];
+    if (rad > mMaxR2) {
+      LOGF(info, "Crossing %d (%.3f, %.3f) radius %.3f bigger than max %.3f, rejecting the crossing, mCurHyp %d", ic, mCrossings.xDCA[ic], mCrossings.yDCA[ic], rad, mMaxR2, mCurHyp);
       continue;
     } else {
-      LOGF(info, "Crossing %d radius OK, mCurHyp", ic, mCurHyp);
+      LOGF(info, "Crossing %d (%.3f, %.3f) radius %.3f OK, mCurHyp", ic, mCrossings.xDCA[ic], mCrossings.yDCA[ic], rad, mCurHyp);
     }
     mCrossIDCur = ic;
     mCrossIDAlt = (mCrossings.nDCA == 2 && mAllowAltPreference) ? 1 - ic : -1; // works for max 2 crossings
