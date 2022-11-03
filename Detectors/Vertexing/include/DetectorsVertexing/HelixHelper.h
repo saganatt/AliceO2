@@ -19,6 +19,7 @@
 #include "CommonConstants/MathConstants.h"
 #include "MathUtils/Utils.h"
 #include "MathUtils/Primitive2D.h"
+#include "Framework/Logger.h"
 
 namespace o2
 {
@@ -256,10 +257,13 @@ struct CrossInfo {
     // calculate up to 2 crossings between 2 circles
     nDCA = 0;
     if (trax0.rC > o2::constants::math::Almost0 && trax1.rC > o2::constants::math::Almost0) { // both are not straight lines
+                                                                                 LOGF(info, "Both tracks are not straight lines, rC: (%.3f, %.3f), almost 0: %.3f maxDistXY: %.3f", trax0.rC, trax1.rC, o2::constants::math::Almost0, maxDistXY);
       nDCA = circlesCrossInfo(trax0, trax1, maxDistXY);
     } else if (trax0.rC < o2::constants::math::Almost0 && trax1.rC < o2::constants::math::Almost0) { // both are straigt lines
+                                                                                 LOGF(info, "Both tracks are straight lines, rC: (%.3f, %.3f), almost 0: %.3f maxDistXY: %.3f", trax0.rC, trax1.rC, o2::constants::math::Almost0, maxDistXY);
       nDCA = linesCrossInfo(trax0, tr0, trax1, tr1, maxDistXY);
     } else {
+                                                                                 LOGF(info, "Both tracks are as circles, rC: (%.3f, %.3f), almost 0: %.3f maxDistXY: %.3f", trax0.rC, trax1.rC, o2::constants::math::Almost0, maxDistXY);
       nDCA = circleLineCrossInfo(trax0, tr0, trax1, tr1, maxDistXY);
     }
     //
