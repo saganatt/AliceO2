@@ -996,6 +996,86 @@ struct RowViewCore : public IP, C... {
   }
 };
 
+template <typename IP, typename... C>
+struct RowViewSel : public RowViewCore<IP, C...> {
+
+  template <typename... C2>
+  RowViewSel(Table<C2...> const& table, IP&& policy)
+    : RowViewCore<IP, C...>(table.mColumnChunks, std::forward<decltype(policy)>(policy))
+  {
+  }
+
+  RowViewSel(arrow::ChunkedArray* columnData[sizeof...(C)], IP&& policy)
+    : RowViewCore<IP, C...>(columnData, std::forward<decltype(policy)>(policy))
+  {
+  }
+
+  template <typename... C2>
+  RowViewSel(RowViewCore<IP, C2...> const& other)
+    : RowViewCore<IP, C...>(other)
+  {
+  }
+
+  template <typename... C2>
+  RowViewSel(RowViewCore<IP, C2...>&& other) noexcept
+    : RowViewCore<IP, C...>(other)
+  {
+  }
+
+  RowViewSel() = default;
+  RowViewSel(RowViewSel const&) = default;
+  RowViewSel(RowViewSel&&) = default;
+
+  RowViewSel& operator=(RowViewSel const&) = default;
+  RowViewSel& operator=(RowViewSel&&) = default;
+
+  RowViewSel& operator=(RowViewSentinel const& other)
+  {
+    this->mRowIndex = other.index;
+    return *this;
+  }
+
+  void matchTo(RowViewSel const& other)
+  {
+    this->mRowIndex = other.mRowIndex;
+  }
+
+  using IP::size;
+
+  using RowViewCore<IP, C...>::operator++;
+
+  /// Allow incrementing by more than one the iterator
+  RowViewSel operator+(int64_t inc) const
+  {
+    RowViewSel copy = *this;
+    copy.moveByIndex(inc);
+    return copy;
+  }
+
+  RowViewSel operator-(int64_t dec) const
+  {
+    return operator+(-dec);
+  }
+
+  RowViewSel const& operator*() const
+  {
+    return *this;
+  }
+
+  //auto values() const
+  //{
+  //}
+};
+
+template <typename... C>
+using sel_iterator = RowViewSel<DefaultIndexPolicy, C...>;
+template <typename... C>
+using sel_const_iterator = RowViewSel<DefaultIndexPolicy, C...>;
+template <typename... C>
+using sel_filtered_iterator = RowViewSel<FilteredIndexPolicy, C...>;
+template <typename... C>
+using sel_filtered_const_iterator = RowViewSel<FilteredIndexPolicy, C...>;
+
 template <typename, typename = void>
 constexpr bool is_type_with_policy_v = false;
 
@@ -1362,9 +1442,18 @@ class Table
     return table_t{mTable->Slice(0, 0), 0};
   }
 
+ template <typename P, typename... Cs>
+ friend class RowViewSel;
+
  protected:
   /// Offset of the table within a larger table.
   uint64_t mOffset;
+  // Cached pointers to the ChunkedArray associated to a column
+  arrow::ChunkedArray* mColumnChunks[sizeof...(C)];
+  /// Cached begin iterator for this table.
+  unfiltered_iterator mBegin;
+  /// Cached end iterator for this table.
+  RowViewSentinel mEnd;
 
  private:
   template <typename T>
@@ -1378,12 +1467,6 @@ class Table
     }
   }
   std::shared_ptr<arrow::Table> mTable;
-  // Cached pointers to the ChunkedArray associated to a column
-  arrow::ChunkedArray* mColumnChunks[sizeof...(C)];
-  /// Cached begin iterator for this table.
-  unfiltered_iterator mBegin;
-  /// Cached end iterator for this table.
-  RowViewSentinel mEnd;
   std::string mCurrentKey;
   std::shared_ptr<arrow::NumericArray<arrow::Int32Type>> mValues = nullptr;
   std::shared_ptr<arrow::NumericArray<arrow::Int64Type>> mCounts = nullptr;

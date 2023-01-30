@@ -169,6 +169,81 @@ BOOST_AUTO_TEST_CASE(TestTableIteration)
   }
 }
 
+BOOST_AUTO_TEST_CASE(TestRuntimeSelectionTableIteration)
+{
+  TableBuilder builder;
+  auto rowWriter = builder.cursor<Points3Ds>();
+  rowWriter(0, 0, 0, 0);
+  rowWriter(0, 0, 1, 1);
+  rowWriter(0, 0, 2, 0);
+  rowWriter(0, 0, 3, 1);
+  rowWriter(0, 1, 4, 0);
+  rowWriter(0, 1, 5, 1);
+  rowWriter(0, 1, 6, 0);
+  rowWriter(0, 1, 7, 1);
+  auto table = builder.finalize();
+
+  using Test = o2::soa::Table<test::X, test::Y, test::Z>;
+  using sel_iterator = o2::soa::sel_iterator<test::X, test::Y>;
+
+  Test test{table};
+
+  std::vector<arrow::ChunkedArray*> selectedColumnChunks;
+  selectedColumnChunks.push_back(getIndexFromLabel(table.get(), "fX"));
+  selectedColumnChunks.push_back(getIndexFromLabel(table.get(), "fY"));
+
+  arrow::ChunkedArray* chunks[2] = {
+    table->column(0).get(),
+    table->column(1).get()};
+  sel_iterator testIt(chunks, {table->num_rows(), 0});
+  BOOST_CHECK_EQUAL(testIt.x(), 0);
+  BOOST_CHECK_EQUAL(testIt.y(), 0);
+  ++testIt;
+  BOOST_CHECK_EQUAL(testIt.x(), 0);
+  BOOST_CHECK_EQUAL(testIt.y(), 1);
+  ++testIt;
+  // TODO: std::vector? tuple?
+  //auto selValues = testIt.values();
+  //BOOST_CHECK_EQUAL(selValues[0], 0);
+  //BOOST_CHECK_EQUAL(selValues[1], 2);
+
+  size_t value = 0;
+  auto b = sel_iterator(test.begin());
+  auto e = sel_iterator(test);
+  e = test.end();
+  BOOST_CHECK(b != e);
+  ++b;
+  ++b;
+  ++b;
+  ++b;
+  ++b;
+  ++b;
+  ++b;
+  ++b;
+  BOOST_CHECK(b == e);
+
+  b = sel_iterator(test.begin());
+  BOOST_CHECK(b != e);
+  BOOST_CHECK((b + 1) == (b + 1));
+  BOOST_CHECK((b + 7) != b);
+  BOOST_CHECK((b + 7) != e);
+  BOOST_CHECK((b + 8) == e);
+
+  e = sel_iterator(test);
+  e = test.end();
+  for (auto& t = sel_iterator(test.begin()); t != e; ++t) {
+    BOOST_CHECK_EQUAL(t.x(), value / 4);
+    BOOST_CHECK_EQUAL(t.y(), value);
+    BOOST_REQUIRE(value < 8);
+    value++;
+  }
+
+  for (auto t1 = sel_iterator(test.begin()); t1 != e; ++t1) {
+    for (auto t2 = t1 + 1; t2 != e; ++t2) {
+    }
+  }
+}
+
 BOOST_AUTO_TEST_CASE(TestDynamicColumns)
 {
   TableBuilder builder;
