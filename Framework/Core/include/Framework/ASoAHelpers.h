@@ -1295,11 +1295,11 @@ struct CombinationsGenerator {
   iterator mEnd;
 };
 
-template <typename T2, typename... T2s>
-constexpr bool isSameType()
-{
-  return std::conjunction_v<std::is_same<T2, T2s>...>;
-}
+// template <typename T2, typename... T2s>
+// constexpr bool isSameType()
+//{
+//   return std::conjunction_v<std::is_same<T2, T2s>...>;
+// }
 
 template <typename BP, typename T1, typename... T2s>
 auto selfCombinations(const BP& binningPolicy, int categoryNeighbours, const T1& outsider, const T2s&... tables)

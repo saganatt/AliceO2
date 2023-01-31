@@ -825,8 +825,24 @@ struct RowViewCore : public IP, C... {
     bindIterators(persistent_columns_t{});
     bindAllDynamicColumns(dynamic_columns_t{});
   }
+  template <typename... C2>
+  RowViewCore(RowViewCore<IP, C2...> const& other)
+    : IP{static_cast<IP const&>(other)},
+      C(static_cast<C const&>(other))...
+  {
+    bindIterators(persistent_columns_t{});
+    bindAllDynamicColumns(dynamic_columns_t{});
+  }
 
-  RowViewCore(RowViewCore&& other) noexcept
+  RowViewCore(RowViewCore<IP, C...>&& other) noexcept
+  {
+    IP::operator=(static_cast<IP&&>(other));
+    (void(static_cast<C&>(*this) = static_cast<C&&>(other)), ...);
+    bindIterators(persistent_columns_t{});
+    bindAllDynamicColumns(dynamic_columns_t{});
+  }
+  template <typename... C2>
+  RowViewCore(RowViewCore<IP, C2...>&& other)
   {
     IP::operator=(static_cast<IP&&>(other));
     (void(static_cast<C&>(*this) = static_cast<C&&>(other)), ...);
@@ -834,7 +850,16 @@ struct RowViewCore : public IP, C... {
     bindAllDynamicColumns(dynamic_columns_t{});
   }
 
-  RowViewCore& operator=(RowViewCore const& other)
+  RowViewCore& operator=(RowViewCore<IP, C...> const& other)
+  {
+    IP::operator=(static_cast<IP const&>(other));
+    (void(static_cast<C&>(*this) = static_cast<C const&>(other)), ...);
+    bindIterators(persistent_columns_t{});
+    bindAllDynamicColumns(dynamic_columns_t{});
+    return *this;
+  }
+  template <typename... C2>
+  RowViewCore& operator=(RowViewCore<IP, C2...> const& other)
   {
     IP::operator=(static_cast<IP const&>(other));
     (void(static_cast<C&>(*this) = static_cast<C const&>(other)), ...);
@@ -843,7 +868,14 @@ struct RowViewCore : public IP, C... {
     return *this;
   }
 
-  RowViewCore& operator=(RowViewCore&& other) noexcept
+  RowViewCore& operator=(RowViewCore<IP, C...>&& other) noexcept
+  {
+    IP::operator=(static_cast<IP&&>(other));
+    (void(static_cast<C&>(*this) = static_cast<C&&>(other)), ...);
+    return *this;
+  }
+  template <typename... C2>
+  RowViewCore& operator=(RowViewCore<IP, C2...>&& other) noexcept
   {
     IP::operator=(static_cast<IP&&>(other));
     (void(static_cast<C&>(*this) = static_cast<C&&>(other)), ...);
@@ -996,6 +1028,13 @@ struct RowViewCore : public IP, C... {
   }
 };
 
+// TODO: Used both in RowViewSel and in ASoAHelpers -- where to put it?
+template <typename T2, typename... T2s>
+constexpr bool isSameType()
+{
+  return std::conjunction_v<std::is_same<T2, T2s>...>;
+}
+
 template <typename IP, typename... C>
 struct RowViewSel : public RowViewCore<IP, C...> {
 
@@ -1062,9 +1101,26 @@ struct RowViewSel : public RowViewCore<IP, C...> {
     return *this;
   }
 
-  //auto values() const
-  //{
-  //}
+  template <typename T, typename... Ts>
+  std::vector<T> getValuesVector() const
+  {
+    return {(*(static_cast<C>(*this).getIterator()))...};
+  }
+
+  auto values() const
+  {
+    if constexpr (isSameType<typename C::type...>()) {
+      return getValuesVector<typename C::type...>();
+    } else {
+      return std::make_tuple((*(static_cast<C>(*this).getIterator()))...);
+    }
+  }
+
+  template <typename T>
+  std::vector<T> forcedTypeValues() const
+  {
+    return {(static_cast<T>(*(static_cast<C>(*this).getIterator())))...};
+  }
 };
 
 template <typename... C>
@@ -1442,8 +1498,8 @@ class Table
     return table_t{mTable->Slice(0, 0), 0};
   }
 
- template <typename P, typename... Cs>
- friend class RowViewSel;
+  template <typename P, typename... Cs>
+  friend class RowViewSel;
 
  protected:
   /// Offset of the table within a larger table.

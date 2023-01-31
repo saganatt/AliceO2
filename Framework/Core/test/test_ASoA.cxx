@@ -73,6 +73,13 @@ DECLARE_SOA_COLUMN(L2, l2, std::vector<int>);
 
 DECLARE_SOA_TABLE(Lists, "TST", "LISTS", o2::soa::Index<>, test::L1, test::L2);
 
+namespace test
+{
+DECLARE_SOA_COLUMN_FULL(F, f, float, "f");
+} // namespace test
+
+DECLARE_SOA_TABLE(PointsMix, "TST", "POINTSMIX", o2::soa::Index<>, test::X, test::Y, test::F);
+
 BOOST_AUTO_TEST_CASE(TestMarkers)
 {
   TableBuilder b1;
@@ -188,10 +195,6 @@ BOOST_AUTO_TEST_CASE(TestRuntimeSelectionTableIteration)
 
   Test test{table};
 
-  std::vector<arrow::ChunkedArray*> selectedColumnChunks;
-  selectedColumnChunks.push_back(getIndexFromLabel(table.get(), "fX"));
-  selectedColumnChunks.push_back(getIndexFromLabel(table.get(), "fY"));
-
   arrow::ChunkedArray* chunks[2] = {
     table->column(0).get(),
     table->column(1).get()};
@@ -201,15 +204,9 @@ BOOST_AUTO_TEST_CASE(TestRuntimeSelectionTableIteration)
   ++testIt;
   BOOST_CHECK_EQUAL(testIt.x(), 0);
   BOOST_CHECK_EQUAL(testIt.y(), 1);
-  ++testIt;
-  // TODO: std::vector? tuple?
-  //auto selValues = testIt.values();
-  //BOOST_CHECK_EQUAL(selValues[0], 0);
-  //BOOST_CHECK_EQUAL(selValues[1], 2);
 
-  size_t value = 0;
   auto b = sel_iterator(test.begin());
-  auto e = sel_iterator(test);
+  auto e = sel_iterator(test.begin());
   e = test.end();
   BOOST_CHECK(b != e);
   ++b;
@@ -229,9 +226,10 @@ BOOST_AUTO_TEST_CASE(TestRuntimeSelectionTableIteration)
   BOOST_CHECK((b + 7) != e);
   BOOST_CHECK((b + 8) == e);
 
-  e = sel_iterator(test);
+  e = sel_iterator(test.begin());
   e = test.end();
-  for (auto& t = sel_iterator(test.begin()); t != e; ++t) {
+  size_t value = 0;
+  for (auto t = sel_iterator(test.begin()); t != e; ++t) {
     BOOST_CHECK_EQUAL(t.x(), value / 4);
     BOOST_CHECK_EQUAL(t.y(), value);
     BOOST_REQUIRE(value < 8);
@@ -241,6 +239,94 @@ BOOST_AUTO_TEST_CASE(TestRuntimeSelectionTableIteration)
   for (auto t1 = sel_iterator(test.begin()); t1 != e; ++t1) {
     for (auto t2 = t1 + 1; t2 != e; ++t2) {
     }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(TestRuntimeSelectionValues)
+{
+  TableBuilder builder;
+  auto rowWriter = builder.cursor<PointsMix>();
+  rowWriter(0, 0, 0, 0.3f);
+  rowWriter(0, 0, 1, 0.6f);
+  rowWriter(0, 0, 2, 0.9f);
+  rowWriter(0, 0, 3, 1.2f);
+  rowWriter(0, 1, 4, 1.5f);
+  rowWriter(0, 1, 5, 1.8f);
+  rowWriter(0, 1, 6, 2.1f);
+  rowWriter(0, 1, 7, 2.4f);
+  auto table = builder.finalize();
+
+  using Test = o2::soa::Table<test::X, test::Y, test::F>;
+  using sel_iterator = o2::soa::sel_iterator<test::X, test::Y>;
+  using sel_diff_iterator = o2::soa::sel_iterator<test::X, test::F>;
+
+  Test test{table};
+
+  arrow::ChunkedArray* chunks[2] = {
+    table->column(0).get(),
+    table->column(1).get()};
+  sel_iterator testIt(chunks, {table->num_rows(), 0});
+  auto selValues = testIt.values();
+  BOOST_CHECK_EQUAL(selValues[0], 0);
+  BOOST_CHECK_EQUAL(selValues[1], 0);
+  ++testIt;
+  selValues = testIt.values();
+  BOOST_CHECK_EQUAL(selValues[0], 0);
+  BOOST_CHECK_EQUAL(selValues[1], 1);
+
+  auto e = sel_iterator(test.begin());
+  e = test.end();
+  size_t value = 0;
+  for (auto t = sel_iterator(test.begin()); t != e; ++t) {
+    auto values = t.values();
+    BOOST_CHECK_EQUAL(values[0], value / 4);
+    BOOST_CHECK_EQUAL(values[1], value);
+    BOOST_REQUIRE(value < 8);
+    value++;
+  }
+
+  const float eps = 0.0001f;
+
+  arrow::ChunkedArray* diffChunks[2] = {
+    table->column(0).get(),
+    table->column(2).get()};
+  sel_diff_iterator testItDiff(diffChunks, {table->num_rows(), 0});
+  auto selDiffValues = testItDiff.values();
+  BOOST_CHECK_EQUAL(std::get<0>(selDiffValues), 0);
+  BOOST_CHECK_CLOSE(std::get<1>(selDiffValues), 0.3f, eps);
+  ++testItDiff;
+  auto selDiffValues2 = testItDiff.values();
+  BOOST_CHECK_EQUAL(std::get<0>(selDiffValues2), 0);
+  BOOST_CHECK_CLOSE(std::get<1>(selDiffValues2), 0.6f, eps);
+
+  auto e_diff = sel_diff_iterator(test.begin());
+  e_diff = test.end();
+  value = 0;
+  for (auto t = sel_diff_iterator(test.begin()); t != e_diff; ++t) {
+    auto values = t.values();
+    BOOST_CHECK_EQUAL(std::get<0>(values), value / 4);
+    BOOST_CHECK_CLOSE(std::get<1>(values), 0.3f * (value + 1), eps);
+    BOOST_REQUIRE(value < 8);
+    value++;
+  }
+
+  value = 0;
+  for (auto t = sel_diff_iterator(test.begin()); t != e_diff; ++t) {
+    auto values = t.forcedTypeValues<float>();
+    float expX = value < 4 ? 0.0f : 1.0f;
+    BOOST_CHECK_EQUAL(values[0], expX);
+    BOOST_CHECK_CLOSE(values[1], 0.3f * (value + 1), eps);
+    BOOST_REQUIRE(value < 8);
+    value++;
+  }
+
+  value = 0;
+  for (auto t = sel_diff_iterator(test.begin()); t != e_diff; ++t) {
+    auto values = t.forcedTypeValues<int32_t>();
+    BOOST_CHECK_EQUAL(values[0], value / 4);
+    BOOST_CHECK_EQUAL(values[1], value / 3);
+    BOOST_REQUIRE(value < 8);
+    value++;
   }
 }
 
