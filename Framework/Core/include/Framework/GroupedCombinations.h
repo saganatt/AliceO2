@@ -85,7 +85,11 @@ struct GroupedCombinationsGenerator {
       } else {
         mGrouping = std::make_shared<G>(std::vector{grouping.asArrowTable()});
       }
-      mAssociated = std::make_shared<std::tuple<As...>>(std::make_tuple(std::get<has_type_at<As>(pack<T2s...>{})>(associated)...));
+      //if constexpr (byIndex) {
+        mAssociated = std::make_shared<std::tuple<As...>>(setAssociatedTables(associated));
+      //} else {
+        //mAssociated = std::make_shared<std::tuple<As...>>(std::make_tuple(std::get<has_type_at<As>(pack<T2s...>{})>(associated)...));
+      //}
       setMultipleGroupingTables<sizeof...(As)>(grouping);
       if (!this->mIsEnd) {
         setCurrentGroupedCombination();
@@ -138,6 +142,24 @@ struct GroupedCombinationsGenerator {
     }
 
    private:
+    template <typename... T2s>
+    std::tuple<As...> setAssociatedTables(std::tuple<T2s...>& associated)
+    {
+      return doSetAssociatedTables(associated, std::make_index_sequence<sizeof...(T2s)>());
+    }
+
+    template <typename... T2s, std::size_t... Is>
+    std::tuple<As...> doSetAssociatedTables(std::tuple<T2s...>& associated, std::index_sequence<Is...>)
+    {
+      return std::make_tuple(setAssociatedTable<Is>(associated)...);
+    }
+
+    template <std::size_t I, typename... T2s>
+    auto setAssociatedTable(std::tuple<T2s...>& associated)
+    {
+      return std::get<I>(associated);
+    }
+
     std::tuple<As...> getAssociatedTables()
     {
       return doGetAssociatedTables(std::make_index_sequence<sizeof...(As)>());

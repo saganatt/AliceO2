@@ -568,6 +568,9 @@ struct Partition {
   using const_iterator = typename o2::soa::Filtered<T>::const_iterator;
   using filtered_iterator = typename o2::soa::Filtered<T>::iterator;
   using filtered_const_iterator = typename o2::soa::Filtered<T>::const_iterator;
+
+  using external_index_columns_t = typename o2::soa::Filtered<T>::external_index_columns_t;
+  using persistent_columns_t = typename o2::soa::Filtered<T>::persistent_columns_t;
   inline filtered_iterator begin()
   {
     return mFiltered->begin();
@@ -588,6 +591,11 @@ struct Partition {
   int64_t size() const
   {
     return mFiltered->size();
+  }
+
+  auto sliceByCached(framework::expressions::BindingNode const& node, int value)
+  {
+    return mFiltered->sliceByCached(node, value);
   }
 };
 } // namespace o2::framework

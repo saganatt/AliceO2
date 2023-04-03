@@ -176,7 +176,7 @@ static void BM_EventMixingCombinations(benchmark::State& state)
     count = 0;
     colCount = 0;
 
-    auto tracksTuple = std::make_tuple(tracks);
+    auto tracksTuple = std::make_tuple(tracks, tracks);
     SameKindPair<o2::aod::Collisions, o2::aod::StoredTracks, BinningType> pair{binningOnPositions, numEventsToMix - 1, -1, collisions, tracksTuple};
     for (auto& [c1, tracks1, c2, tracks2] : pair) {
       int bin = binningOnPositions.getBin({c1.posX(), c1.posY()});
