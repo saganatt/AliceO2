@@ -310,8 +310,8 @@ struct CombinationsStrictlyUpperIndexPolicy : public CombinationsIndexPolicyBase
   CombinationsStrictlyUpperIndexPolicy() : CombinationsIndexPolicyBase<Ts...>() {}
   CombinationsStrictlyUpperIndexPolicy(const Ts&... tables) : CombinationsIndexPolicyBase<Ts...>(tables...)
   {
-    // constexpr auto k = sizeof...(Ts);
-    //  LOG(info) << "Strictly upper constructor tables: " << k << " sizes: " << std::get<0>(*this->mTables).size() << ", " << std::get<1>(*this->mTables).size();
+    constexpr auto k = sizeof...(Ts);
+    LOG(info) << "Strictly upper constructor tables: " << k << " sizes: " << std::get<0>(*this->mTables).size() << ", " << std::get<1>(*this->mTables).size();
 
     if (!this->mIsEnd) {
       setRanges(tables...);
@@ -319,8 +319,8 @@ struct CombinationsStrictlyUpperIndexPolicy : public CombinationsIndexPolicyBase
   }
   CombinationsStrictlyUpperIndexPolicy(Ts&&... tables) : CombinationsIndexPolicyBase<Ts...>(std::forward<Ts>(tables)...)
   {
-    // constexpr auto k = sizeof...(Ts);
-    //  LOG(info) << "Strictly upper constructor tables: " << k << " sizes: " << std::get<0>(*this->mTables).size() << ", " << std::get<1>(*this->mTables).size();
+    constexpr auto k = sizeof...(Ts);
+    LOG(info) << "Strictly upper constructor tables: " << k << " sizes: " << std::get<0>(*this->mTables).size() << ", " << std::get<1>(*this->mTables).size();
     if (!this->mIsEnd) {
       setRanges();
     }
@@ -347,7 +347,7 @@ struct CombinationsStrictlyUpperIndexPolicy : public CombinationsIndexPolicyBase
     for_<k>([&, this](auto i) {
       std::get<i.value>(this->mMaxOffset) += i.value + 1 - k;
       std::get<i.value>(this->mCurrent).moveByIndex(i.value);
-      // LOG(info) << " Indices after set ranges(tables): " << k << " max: " << std::get<i.value>(this->mMaxOffset) << " current: " << *std::get<1>(std::get<i.value>(this->mCurrent).getIndices());
+      LOG(info) << " Indices after set ranges(tables): " << k << " max: " << std::get<i.value>(this->mMaxOffset) << " current: " << *std::get<1>(std::get<i.value>(this->mCurrent).getIndices());
     });
   }
   void setRanges()
@@ -361,7 +361,7 @@ struct CombinationsStrictlyUpperIndexPolicy : public CombinationsIndexPolicyBase
     for_<k>([&, this](auto i) {
       std::get<i.value>(this->mMaxOffset) += i.value + 1 - k;
       std::get<i.value>(this->mCurrent).moveByIndex(i.value);
-      // LOG(info) << " Indices after set ranges: " << k << " max: " << std::get<i.value>(this->mMaxOffset) << " current: " << *std::get<1>(std::get<i.value>(this->mCurrent).getIndices());
+      LOG(info) << " Indices after set ranges: " << k << " max: " << std::get<i.value>(this->mMaxOffset) << " current: " << *std::get<1>(std::get<i.value>(this->mCurrent).getIndices());
     });
   }
 
@@ -372,33 +372,34 @@ struct CombinationsStrictlyUpperIndexPolicy : public CombinationsIndexPolicyBase
     for_<k>([&, this](auto i) {
       if (modify) {
         constexpr auto curInd = k - i.value - 1;
-        // LOG(info) << "i: " << i.value << " curInd: " << curInd << " current at curInd: " << *std::get<1>(std::get<curInd>(this->mCurrent).getIndices());
+        LOG(info) << "i: " << i.value << " curInd: " << curInd << " current at curInd: " << *std::get<1>(std::get<curInd>(this->mCurrent).getIndices());
         std::get<curInd>(this->mCurrent)++;
-        // LOG(info) << "current after increment: " << *std::get<1>(std::get<curInd>(this->mCurrent).getIndices());
+        LOG(info) << "current after increment: " << *std::get<1>(std::get<curInd>(this->mCurrent).getIndices());
         if (*std::get<1>(std::get<curInd>(this->mCurrent).getIndices()) != std::get<curInd>(this->mMaxOffset)) {
-          modify = false;
-          // LOG(info) << "current not max, no need to modify";
-        } else {
-          modify = true;
-          // LOG(info) << "Needs to modify";
+          //modify = false;
+          //LOG(info) << "current not max, no need to modify";
+          //} else {
+          //modify = true;
+          //LOG(info) << "Needs to modify";
+          LOG(info) << "current is not max, correcting the following elements";
           for_<i.value>([&, this](auto j) {
             constexpr auto curJ = k - i.value + j.value;
             int64_t nextInd = *std::get<1>(std::get<curJ - 1>(this->mCurrent).getIndices()) + 1;
-            // LOG(info) << "curJ: " << curJ << " nextInd: " << nextInd << " max: " << std::get<curJ>(this->mMaxOffset);
+            LOG(info) << "curJ: " << curJ << " nextInd: " << nextInd << " max: " << std::get<curJ>(this->mMaxOffset);
             if (nextInd < std::get<curJ>(this->mMaxOffset)) {
-              // LOG(info) << "Less than max, no need to modify";
+              LOG(info) << "Less than max, no need to modify";
               std::get<curJ>(this->mCurrent).setCursor(nextInd);
               modify = false;
             } else {
               modify = true;
-              // LOG(info) << "Needs to modify J";
+              LOG(info) << "Needs to modify J";
             }
           });
         }
       }
     });
     this->mIsEnd = modify;
-    // LOG(info) << "Final isEnd: " << this->mIsEnd;
+    LOG(info) << "Final isEnd: " << this->mIsEnd;
   }
 };
 
