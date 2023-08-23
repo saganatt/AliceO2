@@ -15,7 +15,6 @@
 #include "Framework/ASoA.h"
 #include "Framework/BinningPolicy.h"
 #include "Framework/RuntimeError.h"
-// #include "Framework/Logger.h"
 #include <arrow/table.h>
 
 #include <iterator>
@@ -376,7 +375,7 @@ struct CombinationsStrictlyUpperIndexPolicy : public CombinationsIndexPolicyBase
         std::get<curInd>(this->mCurrent)++;
         LOG(info) << "current after increment: " << *std::get<1>(std::get<curInd>(this->mCurrent).getIndices());
         if (*std::get<1>(std::get<curInd>(this->mCurrent).getIndices()) != std::get<curInd>(this->mMaxOffset)) {
-          //modify = false;
+          modify = false;
           //LOG(info) << "current not max, no need to modify";
           //} else {
           //modify = true;
