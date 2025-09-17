@@ -41,6 +41,7 @@ template <typename G, typename A>
 expressions::BindingNode getMatchingIndexNode()
 {
   using external_index_columns_pack = typename A::external_index_columns_t;
+  static_assert(pack_size(external_index_columns_pack{}) > 0, "No external indices");
   using selected_indices_t = selected_pack_multicondition<is_index_to_g_t, pack<G>, external_index_columns_pack>;
   static_assert(pack_size(selected_indices_t{}) == 1, "No matching index column from associated to grouping");
   using index_column_t = pack_head_t<selected_indices_t>;
