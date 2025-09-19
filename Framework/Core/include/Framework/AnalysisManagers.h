@@ -575,7 +575,7 @@ void setGroupedCombination(C&, TG&, Ts&...)
 template <is_combinations_generator C, typename TG, typename... Ts>
 static void setGroupedCombination(C& comb, TG& grouping, std::tuple<Ts...>& associated)
 {
-  if constexpr (std::same_as<typename C::g_t, std::decay_t<TG>> && (has_type_v<Ts, typename C::associated_pack_t> && ...)) {
+  if constexpr (std::same_as<typename C::g_t, std::decay_t<TG>> && (has_type_v<std::decay_t<Ts>, typename C::associated_pack_t> && ...)) {
     comb.setTables(grouping, associated);
   }
 }
